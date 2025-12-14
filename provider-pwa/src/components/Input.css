@@ -1,0 +1,85 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  color: var(--accent-gold);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.required {
+  color: var(--error);
+  margin-left: 2px;
+}
+
+.input-field {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-family: var(--font-primary);
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  background-color: var(--white);
+}
+
+.input-field::placeholder {
+  color: #999;
+}
+
+.input-error {
+  border-color: var(--error);
+}
+
+.input-error-message {
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-top: var(--spacing-xs);
+}
+
+.input-field[type="date"] {
+  position: relative;
+}
+
+.input-field[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.input-field[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.input-field select,
+select.input-field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-md) center;
+  background-size: 12px;
+  padding-right: calc(var(--spacing-xl) + 12px);
+  cursor: pointer;
+}
+
+.input-field select:focus,
+select.input-field:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23D4C08E' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+.input-field select option {
+  background-color: var(--white);
+  color: var(--text-dark);
+}
+

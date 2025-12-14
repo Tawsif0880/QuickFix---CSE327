@@ -1,0 +1,88 @@
+.signup-container {
+  min-height: 100vh;
+  background-color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl) var(--spacing-md);
+  overflow-y: auto;
+}
+
+.signup-content {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.name-input {
+  width: 100%;
+}
+
+.date-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  position: relative;
+}
+
+.date-label {
+  font-size: 0.875rem;
+  color: var(--accent-gold);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.date-format {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: var(--spacing-xs);
+  position: absolute;
+  bottom: -20px;
+  left: var(--spacing-md);
+}
+
+.error-message {
+  color: var(--error);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: var(--spacing-sm);
+  background-color: rgba(255, 107, 107, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.signup-footer {
+  text-align: center;
+}
+
+.link-text {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: opacity 0.3s ease;
+}
+
+.link-text:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .name-row {
+    grid-template-columns: 1fr;
+  }
+}
+

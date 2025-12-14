@@ -1,0 +1,134 @@
+.book-service-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #23103c 0%, #1a0a2e 100%);
+  padding-bottom: 80px;
+}
+
+.book-service-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(35, 16, 60, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: #D4C08E;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.icon-button:hover {
+  background: rgba(212, 192, 142, 0.1);
+}
+
+.book-service-content {
+  padding: 24px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.book-service-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #D4C08E;
+  margin-bottom: 8px;
+}
+
+.book-service-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 24px;
+}
+
+.error-message {
+  background: rgba(220, 53, 69, 0.2);
+  border: 1px solid rgba(220, 53, 69, 0.5);
+  color: #ff6b6b;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.book-service-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #D4C08E;
+}
+
+.form-select {
+  background: #E8D5B7;
+  border: 2px solid rgba(212, 192, 142, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: #23103c;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #D4C08E;
+}
+
+.form-textarea {
+  background: #E8D5B7;
+  border: 2px solid rgba(212, 192, 142, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: #23103c;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #D4C08E;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .book-service-title {
+    font-size: 24px;
+  }
+}

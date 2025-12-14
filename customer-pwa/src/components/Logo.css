@@ -1,0 +1,64 @@
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.logo-large .logo-icon {
+  width: 120px;
+  height: 120px;
+}
+
+.logo-medium .logo-icon {
+  width: 80px;
+  height: 80px;
+}
+
+.logo-small .logo-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-text {
+  text-align: center;
+}
+
+.logo-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.logo-medium .logo-title {
+  font-size: 1.5rem;
+}
+
+.logo-small .logo-title {
+  font-size: 1rem;
+}
+
+.logo-est {
+  font-size: 0.875rem;
+  color: var(--accent-gold);
+  margin: var(--spacing-xs) 0 0 0;
+  opacity: 0.9;
+}
+
+.logo-small .logo-est {
+  font-size: 0.75rem;
+}
+
