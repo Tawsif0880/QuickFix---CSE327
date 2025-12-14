@@ -1,0 +1,65 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  color: var(--accent-gold);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.required {
+  color: var(--error);
+  margin-left: 2px;
+}
+
+.input-field {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--input-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-family: var(--font-primary);
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  background-color: var(--white);
+}
+
+.input-field::placeholder {
+  color: #999;
+}
+
+.input-error {
+  border-color: var(--error);
+}
+
+.input-error-message {
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-top: var(--spacing-xs);
+}
+
+/* Date input styling */
+.input-field[type="date"] {
+  position: relative;
+}
+
+.input-field[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.input-field[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+

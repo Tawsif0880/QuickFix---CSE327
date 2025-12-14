@@ -1,0 +1,198 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: var(--primary-dark);
+  padding-bottom: 80px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background-color: var(--accent-light);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: var(--text-dark);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.icon-button:hover {
+  opacity: 0.7;
+}
+
+.messages-section {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-md);
+  position: relative;
+}
+
+.messages-button {
+  background: none;
+  border: none;
+  color: #4A90E2;
+  cursor: pointer;
+  position: relative;
+  padding: var(--spacing-sm);
+  transition: transform 0.3s ease;
+}
+
+.messages-button:hover {
+  transform: scale(1.1);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #FF4444;
+  color: white;
+  border-radius: var(--radius-full);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.dashboard-content {
+  padding: var(--spacing-lg) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.dashboard-card {
+  background-color: var(--input-bg);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.job-board-card {
+  border-color: var(--purple-border);
+}
+
+.appointed-card {
+  border-color: var(--purple-border);
+}
+
+.accepted-card {
+  border-color: var(--purple-border);
+}
+
+.payment-card {
+  border-color: var(--purple-border);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+  text-align: center;
+}
+
+.upcoming-jobs-section {
+  margin-top: var(--spacing-md);
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: var(--spacing-md);
+}
+
+.job-slot-card {
+  background-color: var(--primary-light);
+  border: 2px dashed;
+  border-image: repeating-linear-gradient(
+    45deg,
+    var(--accent-light),
+    var(--accent-light) 10px,
+    var(--purple-border) 10px,
+    var(--purple-border) 20px
+  ) 1;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-text {
+  color: var(--accent-gold);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--accent-light);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  color: var(--text-dark);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  transition: opacity 0.3s ease;
+  font-size: 0.75rem;
+}
+
+.nav-item:hover {
+  opacity: 0.7;
+}
+
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 480px) {
+  .cards-row {
+    grid-template-columns: 1fr;
+  }
+}
+
