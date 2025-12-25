@@ -1,0 +1,126 @@
+.install-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  width: 90%;
+  max-width: 500px;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.install-prompt-content {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.install-prompt-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.install-prompt-text {
+  flex: 1;
+}
+
+.install-prompt-text h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.install-prompt-text p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.install-prompt-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.install-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.install-btn:hover {
+  transform: scale(1.05);
+}
+
+.install-btn:active {
+  transform: scale(0.95);
+}
+
+.dismiss-btn {
+  background: #f3f4f6;
+  color: #666;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.dismiss-btn:hover {
+  background: #e5e7eb;
+}
+
+@media (max-width: 600px) {
+  .install-prompt {
+    bottom: 10px;
+    width: 95%;
+  }
+
+  .install-prompt-content {
+    padding: 12px;
+  }
+
+  .install-prompt-icon {
+    font-size: 28px;
+  }
+
+  .install-prompt-text h3 {
+    font-size: 14px;
+  }
+
+  .install-prompt-text p {
+    font-size: 12px;
+  }
+
+  .install-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}

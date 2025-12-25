@@ -1,0 +1,52 @@
+.signin-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #F0F8FF 0%, #E6F2FF 50%, #F0F8FF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.signin-content {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.error-message {
+  color: var(--error);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: var(--spacing-sm);
+  background-color: rgba(255, 107, 107, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.signin-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.link-text {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: opacity 0.3s ease;
+}
+
+.link-text:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
