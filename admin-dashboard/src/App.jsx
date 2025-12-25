@@ -2,7 +2,6 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components'
-import InstallPrompt from './components/InstallPrompt'
 
 // Pages
 import Welcome from './pages/Welcome'
@@ -13,13 +12,11 @@ import Users from './pages/Users'
 import Providers from './pages/Providers'
 import Jobs from './pages/Jobs'
 import Chats from './pages/Chats'
-import Statistics from './pages/Statistics'
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <InstallPrompt />
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/signin" element={<SignIn />} />
@@ -66,15 +63,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <Chats />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/statistics"
-            element={
-              <ProtectedRoute>
-                <Statistics />
               </ProtectedRoute>
             }
           />

@@ -40,25 +40,6 @@ export const adminService = {
   async flagJob(jobId, reason = '') {
     const response = await api.post(`/admin/jobs/${jobId}/flag`, { reason })
     return response.data
-  },
-
-  async getUserGrowth(period = 'all', groupBy = null) {
-    const params = { period }
-    if (groupBy) params.group_by = groupBy
-    const response = await api.get('/admin/statistics/user-growth', { params })
-    return response.data
-  },
-
-  async getServiceDemand(period = 'all') {
-    const params = { period }
-    const response = await api.get('/admin/statistics/service-demand', { params })
-    return response.data
-  },
-
-  async getProviderVerification(period = 'all') {
-    const params = { period }
-    const response = await api.get('/admin/statistics/provider-verification', { params })
-    return response.data
   }
 }
 

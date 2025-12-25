@@ -1,6 +1,6 @@
 .signin-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background-color: var(--primary-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,12 +42,11 @@
   color: var(--accent-gold);
   text-decoration: none;
   font-size: 0.875rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .link-text:hover {
-  color: var(--accent-secondary);
+  opacity: 0.8;
   text-decoration: underline;
 }
 

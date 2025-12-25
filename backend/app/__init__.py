@@ -6,8 +6,7 @@ from extensions import db, jwt, socketio, cors, limiter
 from app.models import (
     User, Customer, Provider, Job, Booking,
     Message, Conversation, Rating, LocationUpdate, Notification,
-    CreditTransaction, ProviderCreditTransaction, ContactView, SavedJob,
-    ChatSession, ChatMessage
+    CreditTransaction, SavedJob
 )
 
 
@@ -39,10 +38,6 @@ def create_app(config_name='default'):
         cors_allowed_origins=app.config['CORS_ORIGINS'],
         async_mode='threading'
     )
-    
-    # Register system blueprint (health check and routes)
-    from app.system import system_bp
-    app.register_blueprint(system_bp)
     
     # Register blueprints
     from app.auth import auth_bp
@@ -83,14 +78,6 @@ def create_app(config_name='default'):
     from app.credits import credits_bp
     app.register_blueprint(credits_bp, url_prefix='/api/credits')
     
-    from app.emergency import emergency_bp
-    app.register_blueprint(emergency_bp, url_prefix='/api/emergency')
-    app.register_blueprint(emergency_bp, url_prefix='/api/provider/emergency', name_prefix='provider_emergency_')
-    
-    from app.notifications import notifications_bp
-    app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
-    app.register_blueprint(notifications_bp, url_prefix='/api/customer/notifications', name_prefix='customer_notifications_')
-    
     # Optional bot module
     try:
         from app.bot import bot_bp
@@ -110,7 +97,6 @@ def create_app(config_name='default'):
     
     # Import Socket.IO handlers to register them
     from app.messaging import socketio_handlers  # noqa: F401
-    from app.emergency import socketio_handlers as emergency_socketio_handlers  # noqa: F401
     
     # Create database tables
     with app.app_context():

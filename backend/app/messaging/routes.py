@@ -8,8 +8,7 @@ from app.models.customer import Customer
 from app.models.provider import Provider
 from app.models.conversation import Conversation
 from app.models.message import Message
-from app.models.provider_credit_transaction import ProviderCreditTransaction
-from app.utils.decorators import customer_required, provider_required, get_user_id_from_jwt
+from app.utils.decorators import customer_required, provider_required
 
 
 @messaging_bp.route('', methods=['POST'], endpoint='start_conversation')
@@ -18,7 +17,7 @@ from app.utils.decorators import customer_required, provider_required, get_user_
 def start_conversation():
     """Start a conversation with a provider"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.customer:
         return jsonify({'error': 'Customer profile not found'}), 404
@@ -32,10 +31,6 @@ def start_conversation():
     provider = Provider.query.get(provider_id)
     if not provider:
         return jsonify({'error': 'Provider not found'}), 404
-    
-    # CRITICAL: Customers cannot start conversations with unavailable providers
-    if not provider.is_available:
-        return jsonify({'error': 'Provider is not available'}), 403
     
     # Check if conversation already exists
     existing_conv = Conversation.query.filter_by(
@@ -67,30 +62,12 @@ def start_conversation():
         return jsonify({'error': str(e)}), 500
 
 
-@messaging_bp.route('/unread-count', methods=['GET'], endpoint='get_unread_count')
-@jwt_required()
-def get_unread_count():
-    """Get total unread message count for the user"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    # Count all unread messages where user is the receiver
-    unread_count = Message.query.filter_by(
-        receiver_id=user.id,
-        is_read=False
-    ).count()
-    
-    return jsonify({
-        'unread_count': unread_count
-    }), 200
-
-
 @messaging_bp.route('', methods=['GET'], endpoint='get_conversations')
 @jwt_required()
 def get_conversations():
     """Get user's conversations"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     conversations = []
     
@@ -140,7 +117,7 @@ def get_messages(conversation_id):
     conversation = Conversation.query.get_or_404(conversation_id)
     
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     # Authorization check
     if user.role == 'customer' and conversation.customer_id != user.customer.id:
@@ -162,49 +139,26 @@ def get_messages(conversation_id):
     
     db.session.commit()
     
-    response_data = {
+    return jsonify({
         'messages': [msg.to_dict() for msg in messages],
         'count': len(messages)
-    }
-    
-    # Include customer message count for customers
-    if user.role == 'customer':
-        response_data['customer_message_count'] = conversation.customer_message_count
-        response_data['next_credit_deduction_at'] = ((conversation.customer_message_count // 3) + 1) * 3
-    
-    return jsonify(response_data), 200
+    }), 200
 
 
-def calculate_credits_for_3_messages(provider_rating):
-    """Calculate credits needed for 3 messages based on provider rating"""
+def calculate_credits_for_message(provider_rating):
+    """Calculate credits needed based on provider rating"""
     # Handle None or 0.0 as NA
     if provider_rating is None or provider_rating == 0.0:
-        return 6  # NA counts as 6 credits for 3 messages
+        return 6  # NA counts as 6 credits
     
     if provider_rating >= 4.5:
-        return 6  # 6 credits for 3 messages
+        return 6
     elif provider_rating >= 4.0:
-        return 4  # 4 credits for 3 messages
+        return 4
     elif provider_rating >= 3.0:
-        return 3  # 3 credits for 3 messages
+        return 2.5  # Will be rounded to 3 for integer storage, but we'll use 2.5 for calculation
     else:
-        return 2  # 2 credits for 3 messages
-
-
-def calculate_provider_credits_per_3_messages(provider_rating):
-    """Calculate provider credits earned per 3 customer messages based on provider rating"""
-    # Handle None or 0.0 as NA
-    if provider_rating is None or provider_rating == 0.0:
-        return 3.0  # NA counts as 3.0 credits per 3 messages
-    
-    if provider_rating >= 4.5:
-        return 3.0
-    elif provider_rating >= 4.0:
-        return 2.0
-    elif provider_rating >= 3.0:
-        return 1.5
-    else:
-        return 1.0
+        return 1
 
 
 @messaging_bp.route('/<int:conversation_id>/messages', methods=['POST'], endpoint='send_message')
@@ -214,7 +168,7 @@ def send_message(conversation_id):
     conversation = Conversation.query.get_or_404(conversation_id)
     
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     # Authorization check
     if user.role == 'customer' and conversation.customer_id != user.customer.id:
@@ -236,8 +190,6 @@ def send_message(conversation_id):
     
     # Credit deduction logic (only for customer messages)
     credits_deducted = 0
-    provider_credits_awarded = 0
-    
     if user.role == 'customer':
         if not user.customer:
             return jsonify({'error': 'Customer profile not found'}), 404
@@ -246,65 +198,27 @@ def send_message(conversation_id):
         provider = conversation.provider
         provider_rating = provider.rating_avg if provider else None
         
-        # Increment customer message count first
-        conversation.customer_message_count += 1
+        # Calculate credits needed
+        credits_needed = calculate_credits_for_message(provider_rating)
         
-        # Calculate credits needed for 3 messages
-        credits_for_3_messages = calculate_credits_for_3_messages(provider_rating)
+        # Check if customer has enough credits
+        if user.customer.credits < credits_needed:
+            return jsonify({
+                'error': 'Insufficient credits',
+                'required': credits_needed,
+                'available': user.customer.credits,
+                'message': f'You need {credits_needed} credits to send this message. You have {user.customer.credits} credits.'
+            }), 402  # 402 Payment Required
         
-        # Deduct credits only every 3 messages
-        if conversation.customer_message_count % 3 == 0:
-            # Check if customer has enough credits for 3 messages
-            if user.customer.credits < credits_for_3_messages:
-                # Rollback the count increment
-                conversation.customer_message_count -= 1
-                db.session.rollback()
-                return jsonify({
-                    'error': 'Insufficient credits',
-                    'required': credits_for_3_messages,
-                    'available': user.customer.credits,
-                    'message': f'You need {credits_for_3_messages} credits to send 3 messages. You have {user.customer.credits} credits.'
-                }), 402  # 402 Payment Required
-            
-            # Deduct credits for 3 messages
-            user.customer.credits -= credits_for_3_messages
-            
-            # Ensure credits never go negative (safety check)
-            if user.customer.credits < 0:
-                user.customer.credits = 0
-            
-            credits_deducted = credits_for_3_messages
-            
-            # Create customer credit transaction record
-            from app.models.credit_transaction import CreditTransaction
-            transaction = CreditTransaction(
-                customer_id=user.customer.id,
-                transaction_type='deduction',
-                amount=-credits_for_3_messages,  # Negative for deduction
-                description=f'Credits deducted for 3 messages (batch #{conversation.customer_message_count // 3})',
-                provider_id=provider.id if provider else None
-            )
-            db.session.add(transaction)
+        # Deduct credits (round 2.5 to 3 for integer storage)
+        credits_to_deduct = int(round(credits_needed))
+        user.customer.credits -= credits_to_deduct
         
-        # Award provider credits every 3 customer messages
-        if conversation.customer_message_count % 3 == 0 and provider:
-            provider_rating = provider.rating_avg if provider else None
-            credits_to_award = calculate_provider_credits_per_3_messages(provider_rating)
-            
-            # Award credits to provider
-            provider.credits += credits_to_award
-            provider_credits_awarded = credits_to_award
-            
-            # Create provider credit transaction record
-            transaction = ProviderCreditTransaction(
-                provider_id=provider.id,
-                transaction_type='message_batch',
-                amount=credits_to_award,
-                status='completed',
-                method=None,
-                description=f'Credits earned for 3 customer messages (batch #{conversation.customer_message_count // 3})'
-            )
-            db.session.add(transaction)
+        # Ensure credits never go negative (safety check)
+        if user.customer.credits < 0:
+            user.customer.credits = 0
+        
+        credits_deducted = credits_to_deduct
     
     try:
         message = Message(
@@ -329,16 +243,9 @@ def send_message(conversation_id):
         }
         
         # Include credit info if customer sent the message
-        if user.role == 'customer':
-            response_data['customer_message_count'] = conversation.customer_message_count
-            response_data['next_credit_deduction_at'] = ((conversation.customer_message_count // 3) + 1) * 3
-            if credits_deducted > 0:
-                response_data['credits_deducted'] = credits_deducted
-                response_data['remaining_credits'] = user.customer.credits
-        
-        # Include provider credits awarded if applicable
-        if provider_credits_awarded > 0:
-            response_data['provider_credits_awarded'] = provider_credits_awarded
+        if user.role == 'customer' and credits_deducted > 0:
+            response_data['credits_deducted'] = credits_deducted
+            response_data['remaining_credits'] = user.customer.credits
         
         return jsonify(response_data), 201
     

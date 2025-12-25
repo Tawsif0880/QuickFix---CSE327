@@ -1,6 +1,6 @@
 .welcome-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background-color: var(--primary-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,8 +17,8 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(212, 192, 142, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(212, 192, 142, 0.05) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -45,9 +45,8 @@
   color: var(--accent-gold);
   font-size: 1rem;
   font-style: italic;
-  font-weight: 600;
   margin-top: var(--spacing-lg);
-  opacity: 1;
+  opacity: 0.9;
   line-height: 1.6;
 }
 

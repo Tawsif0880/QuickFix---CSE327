@@ -6,11 +6,6 @@ export const jobService = {
     return response.data
   },
 
-  async createProviderRequest(data) {
-    const response = await api.post('/customer/requests/provider-requests', data)
-    return response.data
-  },
-
   async getMyRequests() {
     const response = await api.get('/customer/requests')
     return response.data

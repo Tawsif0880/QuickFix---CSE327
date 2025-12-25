@@ -3,13 +3,6 @@ from flask import jsonify
 from flask_jwt_extended import get_jwt_identity
 
 
-def get_user_id_from_jwt(current_user):
-    """Extract user ID from JWT identity (handles both dict and scalar formats)"""
-    if isinstance(current_user, dict):
-        return current_user.get('id')
-    return current_user
-
-
 def customer_required(f):
     """Decorator to require customer role"""
     @wraps(f)
@@ -41,5 +34,4 @@ def admin_required(f):
             return jsonify({'error': 'Admin access required'}), 403
         return f(*args, **kwargs)
     return decorated_function
-
 

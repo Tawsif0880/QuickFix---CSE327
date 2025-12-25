@@ -12,7 +12,6 @@ const JobBoard = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [providerAvailability, setProviderAvailability] = useState(true)
-  const [providerCredits, setProviderCredits] = useState(0)
   const [acceptingJobId, setAcceptingJobId] = useState(null)
   const [savingJobId, setSavingJobId] = useState(null)
 
@@ -27,7 +26,6 @@ const JobBoard = () => {
       const response = await jobService.getOpenJobs()
       setJobs(response.jobs || [])
       setProviderAvailability(response.provider_availability !== false)
-      setProviderCredits(response.provider_credits || 0)
     } catch (err) {
       console.error('Error loading jobs:', err)
       setError(err.response?.data?.error || 'Failed to load jobs')
@@ -47,38 +45,22 @@ const JobBoard = () => {
       setError('')
       const response = await jobService.acceptJob(jobId)
       
-      // Update provider credits if returned
-      if (response.remaining_credits !== undefined) {
-        setProviderCredits(response.remaining_credits)
-      }
-      
       // Remove accepted job from list
       setJobs(prev => prev.filter(job => job.id !== jobId))
       
       // Show success message or navigate
       alert('Job accepted successfully!')
       
-      // Reload jobs to get updated credit balance
-      loadJobs()
-      
       // Optionally navigate to accepted jobs
       // navigate('/accepted-jobs')
     } catch (err) {
       console.error('Error accepting job:', err)
       const errorMsg = err.response?.data?.error || 'Failed to accept job'
-      const errorData = err.response?.data
-      
-      // Handle insufficient credits error
-      if (err.response?.status === 400 && (errorMsg === 'INSUFFICIENT_CREDITS' || errorData?.error === 'INSUFFICIENT_CREDITS')) {
-        setError(errorData?.message || 'Insufficient credits to accept this job')
-        // Reload jobs to get updated credit balance
-        loadJobs()
-      } else {
       setError(errorMsg)
+      
       // If job was already accepted, reload the list
       if (err.response?.status === 409 || errorMsg.includes('already been accepted')) {
         loadJobs()
-        }
       }
     } finally {
       setAcceptingJobId(null)
@@ -168,11 +150,7 @@ const JobBoard = () => {
         ) : (
           <div className="jobs-list">
             {jobs.map(job => {
-              // Calculate acceptance cost (5% of offered price)
-              const acceptanceCost = job.offered_price ? (job.offered_price * 0.05) : 0
-              const hasValidPrice = job.offered_price && job.offered_price > 0
-              const hasEnoughCredits = providerCredits >= acceptanceCost
-              const canAccept = providerAvailability && job.status === 'OPEN' && !job.provider_id && hasValidPrice && hasEnoughCredits
+              const canAccept = providerAvailability && job.status === 'OPEN' && !job.provider_id
               const isAccepting = acceptingJobId === job.id
               const isSaving = savingJobId === job.id
 
@@ -193,13 +171,6 @@ const JobBoard = () => {
                       <div className="job-detail-item">
                         <span className="detail-label">Price:</span>
                         <span className="detail-value">${parseFloat(job.offered_price).toFixed(2)}</span>
-                      </div>
-                    )}
-
-                    {job.offered_price && (
-                      <div className="job-detail-item">
-                        <span className="detail-label">Acceptance cost:</span>
-                        <span className="detail-value">{acceptanceCost.toFixed(2)} credits (5%)</span>
                       </div>
                     )}
 
@@ -231,7 +202,6 @@ const JobBoard = () => {
                       onClick={() => handleAccept(job.id)}
                       disabled={!canAccept || isAccepting || isSaving}
                       className="accept-button"
-                      title={!hasEnoughCredits && job.offered_price ? `Not enough credits. Required: ${acceptanceCost.toFixed(2)}, Available: ${providerCredits.toFixed(2)}` : ''}
                     >
                       {isAccepting ? 'Accepting...' : 'Accept Now'}
                     </Button>
@@ -250,10 +220,6 @@ const JobBoard = () => {
                     <div className="job-status-note">
                       {!providerAvailability 
                         ? 'You must be available to accept jobs'
-                        : !hasValidPrice
-                        ? 'This job has no valid price'
-                        : !hasEnoughCredits
-                        ? `Not enough credits. Required: ${acceptanceCost.toFixed(2)}, Available: ${providerCredits.toFixed(2)}`
                         : 'This job is no longer available'
                       }
                     </div>

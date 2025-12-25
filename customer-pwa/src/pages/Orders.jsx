@@ -10,13 +10,6 @@ const Orders = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showRatingModal, setShowRatingModal] = useState(false)
-  const [ratingJobId, setRatingJobId] = useState(null)
-  const [ratingProviderId, setRatingProviderId] = useState(null)
-  const [selectedRating, setSelectedRating] = useState(0)
-  const [reviewText, setReviewText] = useState('')
-  const [ratingLoading, setRatingLoading] = useState(false)
-  const [ratingError, setRatingError] = useState('')
 
   useEffect(() => {
     loadOrders()
@@ -26,17 +19,8 @@ const Orders = () => {
     try {
       setLoading(true)
       setError('')
-      
-      // Use history endpoint for completed orders to get rating status
-      // Use regular endpoint for other filters
-      let response
-      if (statusFilter === 'completed') {
-        response = await bookingService.getBookingHistory()
-      } else {
-        const status = statusFilter === 'all' ? null : statusFilter
-        response = await bookingService.getMyBookings(status)
-      }
-      
+      const status = statusFilter === 'all' ? null : statusFilter
+      const response = await bookingService.getMyBookings(status)
       setOrders(response.bookings || [])
     } catch (err) {
       console.error('Error loading orders:', err)
@@ -94,89 +78,6 @@ const Orders = () => {
       default:
         return status || 'Unknown'
     }
-  }
-
-  const canRateOrder = (order) => {
-    // Can rate if:
-    // 1. Booking status is completed
-    // 2. Job status is COMPLETED (not REPORTED)
-    // 3. No rating exists yet
-    const bookingCompleted = order.status?.toLowerCase() === 'completed'
-    const jobCompleted = order.job?.status?.toUpperCase() === 'COMPLETED'
-    const notReported = order.job?.status?.toUpperCase() !== 'REPORTED'
-    const noExistingRating = !order.has_rating
-    
-    return bookingCompleted && jobCompleted && notReported && noExistingRating
-  }
-
-  const openRatingModal = (jobId, providerId) => {
-    setRatingJobId(jobId)
-    setRatingProviderId(providerId)
-    setSelectedRating(0)
-    setReviewText('')
-    setRatingError('')
-    setShowRatingModal(true)
-  }
-
-  const handleSubmitRating = async () => {
-    if (selectedRating === 0) {
-      setRatingError('Please select a rating')
-      return
-    }
-    
-    try {
-      setRatingLoading(true)
-      setRatingError('')
-      await bookingService.submitJobRating(ratingJobId, selectedRating, reviewText)
-      
-      // Update the order in the list to show it's been rated with the rating value
-      setOrders(prev => prev.map(order => {
-        if (order.job_id === ratingJobId) {
-          return { 
-            ...order, 
-            has_rating: true, 
-            can_rate: false,
-            rating: { rating: selectedRating }
-          }
-        }
-        return order
-      }))
-      
-      setShowRatingModal(false)
-      setRatingJobId(null)
-      setRatingProviderId(null)
-      setSelectedRating(0)
-      setReviewText('')
-    } catch (err) {
-      console.error('Error submitting rating:', err)
-      setRatingError(err.response?.data?.error || 'Failed to submit rating')
-    } finally {
-      setRatingLoading(false)
-    }
-  }
-
-  const StarRating = ({ rating, onSelect, interactive = true }) => {
-    const [hoverRating, setHoverRating] = useState(0)
-    
-    return (
-      <div className="star-rating">
-        {[1, 2, 3, 4, 5].map(star => (
-          <button
-            key={star}
-            type="button"
-            className={`star-button ${star <= (hoverRating || rating) ? 'filled' : ''}`}
-            onClick={() => interactive && onSelect(star)}
-            onMouseEnter={() => interactive && setHoverRating(star)}
-            onMouseLeave={() => interactive && setHoverRating(0)}
-            disabled={!interactive}
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill={star <= (hoverRating || rating) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </button>
-        ))}
-      </div>
-    )
   }
 
   return (
@@ -317,38 +218,8 @@ const Orders = () => {
                   )}
                 </div>
 
-                {/* Rating Status Badge */}
-                {order.status?.toLowerCase() === 'completed' && (
-                  <div className="rating-status">
-                    {order.has_rating ? (
-                      <span className="rating-badge rated">
-                        <span className="rating-stars">
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <svg 
-                              key={star} 
-                              width="16" 
-                              height="16" 
-                              viewBox="0 0 24 24" 
-                              fill={star <= (order.rating?.rating || 0) ? 'currentColor' : 'none'} 
-                              stroke="currentColor" 
-                              strokeWidth="2"
-                            >
-                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                            </svg>
-                          ))}
-                        </span>
-                        <span className="rating-text">You rated {order.rating?.rating || 0} stars</span>
-                      </span>
-                    ) : order.job?.status?.toUpperCase() === 'REPORTED' ? (
-                      <span className="rating-badge reported">Cannot Rate</span>
-                    ) : (
-                      <span className="rating-badge not-rated">Not Rated</span>
-                    )}
-                  </div>
-                )}
-
-                <div className="order-actions">
-                  {order.provider && (
+                {order.provider && (
+                  <div className="order-actions">
                     <Button
                       variant="secondary"
                       onClick={() => navigate(`/provider/${order.provider.id}`)}
@@ -356,73 +227,13 @@ const Orders = () => {
                     >
                       View Provider
                     </Button>
-                  )}
-                  
-                  {canRateOrder(order) && (
-                    <Button
-                      variant="primary"
-                      onClick={() => openRatingModal(order.job_id, order.provider_id)}
-                      className="rate-provider-button"
-                    >
-                      Rate Provider
-                    </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
-
-      {/* Rating Modal */}
-      {showRatingModal && (
-        <div className="modal-overlay" onClick={() => setShowRatingModal(false)}>
-          <div className="rating-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="modal-title">Rate Your Provider</h3>
-            <p className="modal-subtitle">How was your experience?</p>
-            
-            <div className="rating-section">
-              <StarRating rating={selectedRating} onSelect={setSelectedRating} />
-              <p className="rating-label">
-                {selectedRating === 0 ? 'Select a rating' : 
-                 selectedRating === 1 ? 'Poor' :
-                 selectedRating === 2 ? 'Fair' :
-                 selectedRating === 3 ? 'Good' :
-                 selectedRating === 4 ? 'Very Good' :
-                 'Excellent'}
-              </p>
-            </div>
-            
-            <textarea
-              className="review-input"
-              placeholder="Write a review (optional)..."
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              rows={4}
-            />
-            
-            {ratingError && (
-              <div className="rating-error">{ratingError}</div>
-            )}
-            
-            <div className="modal-actions">
-              <button
-                className="modal-button cancel-button"
-                onClick={() => setShowRatingModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="modal-button submit-button"
-                onClick={handleSubmitRating}
-                disabled={ratingLoading || selectedRating === 0}
-              >
-                {ratingLoading ? 'Submitting...' : 'Submit Rating'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -120,14 +120,6 @@ def refresh():
 @jwt_required()
 def logout():
     """Logout user (token blacklisting can be added here)"""
-    current_user = get_jwt_identity()
-    user = User.query.get(current_user['id'])
-    
-    # Reset emergency_active for providers on logout
-    if user and user.provider:
-        user.provider.emergency_active = False
-        db.session.commit()
-    
     # In a production app, you would add the token to a blacklist
     # For now, we'll just return success
     return jsonify({'message': 'Logged out successfully'}), 200

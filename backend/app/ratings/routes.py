@@ -5,10 +5,9 @@ from extensions import db
 from datetime import datetime
 from app.models.user import User
 from app.models.booking import Booking
-from app.models.job import Job
 from app.models.rating import Rating
 from app.models.provider import Provider
-from app.utils.decorators import customer_required, get_user_id_from_jwt
+from app.utils.decorators import customer_required
 
 
 @ratings_bp.route('/bookings/<int:booking_id>', methods=['POST'], endpoint='submit_review')
@@ -19,8 +18,7 @@ def submit_review(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     
     current_user = get_jwt_identity()
-    user_id = current_user['id'] if isinstance(current_user, dict) else current_user
-    user = User.query.get(user_id)
+    user = User.query.get(current_user['id'])
     
     # Check if booking belongs to customer
     if booking.customer_id != user.customer.id:
@@ -39,11 +37,11 @@ def submit_review(booking_id):
     rating_value = data.get('rating')
     review_text = data.get('review_text', '')
     
-    if rating_value is None:
+    if not rating_value:
         return jsonify({'error': 'Rating is required'}), 400
     
-    if not isinstance(rating_value, int) or rating_value < 0 or rating_value > 5:
-        return jsonify({'error': 'Rating must be between 0 and 5'}), 400
+    if not isinstance(rating_value, int) or rating_value < 1 or rating_value > 5:
+        return jsonify({'error': 'Rating must be between 1 and 5'}), 400
     
     try:
         review = Rating(
@@ -70,97 +68,6 @@ def submit_review(booking_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
-
-# Job-based rating routes
-@ratings_bp.route('/jobs/<int:job_id>', methods=['POST'], endpoint='submit_job_rating')
-@jwt_required()
-@customer_required
-def submit_job_rating(job_id):
-    """Submit a rating for a completed job"""
-    job = Job.query.get_or_404(job_id)
-    
-    current_user = get_jwt_identity()
-    user_id = current_user['id'] if isinstance(current_user, dict) else current_user
-    user = User.query.get(user_id)
-    
-    # Verify job belongs to customer
-    if job.customer_id != user.customer.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    # Verify job status is COMPLETED (not REPORTED)
-    if job.status != 'COMPLETED':
-        if job.status == 'REPORTED':
-            return jsonify({'error': 'Cannot rate a reported job'}), 400
-        return jsonify({'error': 'Can only rate completed jobs'}), 400
-    
-    # Check if rating already exists for this job
-    existing_rating = Rating.query.filter_by(job_id=job_id).first()
-    if existing_rating:
-        return jsonify({'error': 'Rating already submitted for this job'}), 400
-    
-    data = request.get_json()
-    rating_value = data.get('rating')
-    review_text = data.get('review_text', '')
-    
-    if rating_value is None:
-        return jsonify({'error': 'Rating is required'}), 400
-    
-    if not isinstance(rating_value, int) or rating_value < 0 or rating_value > 5:
-        return jsonify({'error': 'Rating must be between 0 and 5'}), 400
-    
-    try:
-        # Get associated booking
-        booking = Booking.query.filter_by(job_id=job_id).first()
-        
-        rating = Rating(
-            job_id=job_id,
-            booking_id=booking.id if booking else None,
-            customer_id=user.customer.id,
-            provider_id=job.provider_id,
-            rating=rating_value,
-            review_text=review_text
-        )
-        db.session.add(rating)
-        db.session.commit()
-        
-        # Update provider rating
-        provider = Provider.query.get(job.provider_id)
-        if provider:
-            provider.update_rating()
-        
-        return jsonify({
-            'message': 'Rating submitted successfully',
-            'rating': rating.to_dict(include_customer_name=True)
-        }), 201
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
-
-@ratings_bp.route('/jobs/<int:job_id>', methods=['GET'], endpoint='get_job_rating')
-@jwt_required()
-@customer_required
-def get_job_rating(job_id):
-    """Check if a rating exists for a job"""
-    job = Job.query.get_or_404(job_id)
-    
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    # Verify job belongs to customer
-    if job.customer_id != user.customer.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    # Check if rating exists
-    existing_rating = Rating.query.filter_by(job_id=job_id).first()
-    
-    return jsonify({
-        'has_rating': existing_rating is not None,
-        'can_rate': job.status == 'COMPLETED' and existing_rating is None,
-        'rating': existing_rating.to_dict(include_customer_name=True) if existing_rating else None
-    }), 200
 
 
 @ratings_bp.route('/providers/<int:provider_id>', methods=['GET'], endpoint='get_provider_reviews')

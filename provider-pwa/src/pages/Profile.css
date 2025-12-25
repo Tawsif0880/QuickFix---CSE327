@@ -248,21 +248,3 @@
   height: 24px;
 }
 
-.credits-display {
-  display: flex;
-  align-items: baseline;
-  gap: var(--spacing-xs);
-}
-
-.credits-amount {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--accent-gold);
-}
-
-.credits-label {
-  font-size: 0.875rem;
-  color: var(--white);
-  opacity: 0.8;
-}
-

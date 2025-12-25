@@ -7,8 +7,7 @@ from app.models.user import User
 from app.models.booking import Booking
 from app.models.job import Job
 from app.models.provider import Provider
-from app.models.rating import Rating
-from app.utils.decorators import customer_required, provider_required, get_user_id_from_jwt
+from app.utils.decorators import customer_required, provider_required
 
 
 @bookings_bp.route('', methods=['GET'], endpoint='get_bookings')
@@ -16,7 +15,7 @@ from app.utils.decorators import customer_required, provider_required, get_user_
 def get_bookings():
     """Get bookings (customer or provider view)"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     status_filter = request.args.get('status')
     
@@ -66,7 +65,7 @@ def get_booking(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     # Authorization check
     if user.role == 'customer' and booking.customer_id != user.customer.id:
@@ -91,7 +90,7 @@ def update_booking_status(booking_id):
     booking = Booking.query.get_or_404(booking_id)
     
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     data = request.get_json()
     new_status = data.get('status')
@@ -127,50 +126,4 @@ def update_booking_status(booking_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
-
-@bookings_bp.route('/history', methods=['GET'], endpoint='get_booking_history')
-@jwt_required()
-@customer_required
-def get_booking_history():
-    """Get customer's booking history with rating status"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    if not user.customer:
-        return jsonify({'error': 'Customer profile not found'}), 404
-    
-    # Get all completed bookings for this customer
-    bookings = Booking.query.filter_by(
-        customer_id=user.customer.id
-    ).filter(Booking.status.in_(['completed', 'cancelled'])).order_by(Booking.completed_at.desc()).all()
-    
-    bookings_data = []
-    for booking in bookings:
-        booking_data = booking.to_dict()
-        
-        # Include job details
-        if booking.job:
-            job_data = booking.job.to_dict()
-            booking_data['job'] = job_data
-            
-            # Check rating status
-            existing_rating = Rating.query.filter_by(job_id=booking.job_id).first()
-            booking_data['has_rating'] = existing_rating is not None
-            booking_data['can_rate'] = (
-                booking.job.status == 'COMPLETED' and 
-                existing_rating is None
-            )
-            booking_data['rating'] = existing_rating.to_dict() if existing_rating else None
-        
-        # Include provider details
-        if booking.provider:
-            booking_data['provider'] = booking.provider.to_dict()
-        
-        bookings_data.append(booking_data)
-    
-    return jsonify({
-        'bookings': bookings_data,
-        'count': len(bookings_data)
-    }), 200
 

@@ -19,8 +19,6 @@ class Provider(db.Model):
     rating_avg = db.Column(db.Float, default=0.0, nullable=False)
     rating_count = db.Column(db.Integer, default=0, nullable=False)
     is_available = db.Column(db.Boolean, default=True, nullable=False, index=True)
-    credits = db.Column(db.Float, default=20.0, nullable=False)
-    emergency_active = db.Column(db.Boolean, default=False, nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -58,8 +56,6 @@ class Provider(db.Model):
             'rating_avg': self.rating_avg,
             'rating_count': self.rating_count,
             'is_available': self.is_available,
-            'credits': self.credits,
-            'emergency_active': self.emergency_active,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
         if include_contact:

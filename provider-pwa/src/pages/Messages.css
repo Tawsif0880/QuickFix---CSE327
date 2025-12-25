@@ -1,6 +1,6 @@
 .messages-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background-color: var(--primary-dark);
   padding-bottom: 20px;
 }
 
@@ -8,29 +8,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-md);
+  background-color: var(--accent-light);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .back-button {
-  background: rgba(255, 255, 255, 0.1);
+  background: none;
   border: none;
-  border-radius: 12px;
-  color: #fff;
+  color: var(--text-dark);
   cursor: pointer;
-  padding: 10px;
+  padding: var(--spacing-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  opacity: 0.7;
 }
 
 .messages-header {
@@ -74,23 +70,20 @@
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  background-color: var(--primary-medium);
+  border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .conversation-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: var(--primary-light);
+  transform: translateX(4px);
 }
 
 .conversation-item.unread {
-  background: rgba(255, 255, 255, 0.1);
+  background-color: var(--primary-light);
   border-left: 3px solid var(--accent-gold);
 }
 
@@ -98,11 +91,11 @@
   width: 60px;
   height: 60px;
   border-radius: var(--radius-full);
-  background: var(--purple-active);
+  background-color: var(--accent-gold);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--primary-dark);
   font-size: 1.5rem;
   font-weight: bold;
   flex-shrink: 0;
@@ -153,8 +146,8 @@
 }
 
 .unread-badge {
-  background: var(--purple-active);
-  color: #fff;
+  background-color: var(--accent-gold);
+  color: var(--primary-dark);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;

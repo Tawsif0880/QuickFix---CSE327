@@ -9,10 +9,6 @@ const AcceptedJobs = () => {
   const [acceptedJobs, setAcceptedJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [actionLoading, setActionLoading] = useState(null)
-  const [showReportModal, setShowReportModal] = useState(false)
-  const [reportJobId, setReportJobId] = useState(null)
-  const [reportReason, setReportReason] = useState('')
 
   useEffect(() => {
     loadAcceptedJobs()
@@ -76,49 +72,6 @@ const AcceptedJobs = () => {
       default:
         return status || 'Unknown'
     }
-  }
-
-  const handleCompleteJob = async (jobId) => {
-    try {
-      setActionLoading(jobId)
-      await jobService.completeJob(jobId)
-      // Remove from list after completion
-      setAcceptedJobs(prev => prev.filter(job => job.id !== jobId))
-    } catch (err) {
-      console.error('Error completing job:', err)
-      setError(err.response?.data?.error || 'Failed to complete job')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const openReportModal = (jobId) => {
-    setReportJobId(jobId)
-    setReportReason('')
-    setShowReportModal(true)
-  }
-
-  const handleReportCustomer = async () => {
-    if (!reportJobId) return
-    
-    try {
-      setActionLoading(reportJobId)
-      await jobService.reportCustomer(reportJobId, reportReason)
-      // Remove from list after reporting
-      setAcceptedJobs(prev => prev.filter(job => job.id !== reportJobId))
-      setShowReportModal(false)
-      setReportJobId(null)
-      setReportReason('')
-    } catch (err) {
-      console.error('Error reporting customer:', err)
-      setError(err.response?.data?.error || 'Failed to report customer')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const canPerformActions = (status) => {
-    return status?.toUpperCase() === 'ACCEPTED'
   }
 
   return (
@@ -239,78 +192,11 @@ const AcceptedJobs = () => {
                     </div>
                   </div>
                 )}
-
-                {/* Action Buttons for ACCEPTED jobs */}
-                {canPerformActions(job.status) && (
-                  <div className="job-actions">
-                    <button
-                      className="action-button done-button"
-                      onClick={() => handleCompleteJob(job.id)}
-                      disabled={actionLoading === job.id}
-                    >
-                      {actionLoading === job.id ? (
-                        <span>Processing...</span>
-                      ) : (
-                        <>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Done</span>
-                        </>
-                      )}
-                    </button>
-                    <button
-                      className="action-button report-button"
-                      onClick={() => openReportModal(job.id)}
-                      disabled={actionLoading === job.id}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                        <line x1="4" y1="22" x2="4" y2="15"/>
-                      </svg>
-                      <span>Report Customer</span>
-                    </button>
-                  </div>
-                )}
               </div>
             ))}
           </div>
         )}
       </div>
-
-      {/* Report Modal */}
-      {showReportModal && (
-        <div className="modal-overlay" onClick={() => setShowReportModal(false)}>
-          <div className="report-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="modal-title">Report Customer</h3>
-            <p className="modal-subtitle">Please provide a reason for reporting this customer (optional)</p>
-            
-            <textarea
-              className="report-reason-input"
-              placeholder="Enter reason for reporting..."
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              rows={4}
-            />
-            
-            <div className="modal-actions">
-              <button
-                className="modal-button cancel-button"
-                onClick={() => setShowReportModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="modal-button confirm-button"
-                onClick={handleReportCustomer}
-                disabled={actionLoading}
-              >
-                {actionLoading ? 'Reporting...' : 'Report'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

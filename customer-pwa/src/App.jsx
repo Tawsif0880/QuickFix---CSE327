@@ -1,8 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
-import { ProtectedRoute, ChatBotWidget } from './components'
-import InstallPrompt from './components/InstallPrompt'
+import { ProtectedRoute } from './components'
 
 // Pages
 import Welcome from './pages/Welcome'
@@ -22,14 +21,11 @@ import Chat from './pages/Chat'
 import Messages from './pages/Messages'
 import BookService from './pages/BookService'
 import Orders from './pages/Orders'
-import Emergency from './pages/Emergency'
-import Notifications from './pages/Notifications'
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <InstallPrompt />
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/signin" element={<SignIn />} />
@@ -142,7 +138,7 @@ function App() {
             }
           />
           <Route path="/location" element={<ProtectedRoute><div>Location Page</div></ProtectedRoute>} />
-          <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><div>Notifications Page</div></ProtectedRoute>} />
           <Route path="/menu" element={<ProtectedRoute><div>Menu Page</div></ProtectedRoute>} />
           <Route
             path="/call-expert"
@@ -160,21 +156,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/emergency"
-            element={
-              <ProtectedRoute>
-                <Emergency />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/emergency" element={<ProtectedRoute><div>Emergency Page</div></ProtectedRoute>} />
+          <Route path="/chat-ai" element={<ProtectedRoute><div>ChatAI Page</div></ProtectedRoute>} />
           <Route path="/forgot-password" element={<div>Forgot Password Page</div>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        
-        {/* Floating ChatBot Widget - Available on all authenticated pages */}
-        <ChatBotWidget />
       </Router>
     </AuthProvider>
   )

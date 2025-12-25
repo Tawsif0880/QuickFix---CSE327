@@ -12,14 +12,14 @@
 }
 
 .btn-primary {
-  background-color: var(--accent-gold);
-  color: var(--white);
+  background-color: var(--primary-light);
+  color: var(--accent-gold);
   border-color: var(--accent-gold);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #3557C7;
-  border-color: #3557C7;
+  background-color: var(--accent-gold);
+  color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -36,7 +36,7 @@
 
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--accent-gold);
-  color: var(--white);
+  color: var(--primary-dark);
 }
 
 .btn-danger {

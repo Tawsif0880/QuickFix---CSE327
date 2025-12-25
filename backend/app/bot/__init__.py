@@ -1,6 +1,7 @@
-# Bot module for AI chatbot functionality
+# Bot module - to be implemented in Phase 2 (optional)
 from flask import Blueprint
-from app.bot.routes import bot_bp
 
-__all__ = ['bot_bp']
+bot_bp = Blueprint('bot', __name__)
+
+# Routes will be added in Phase 2
 

@@ -1,34 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Logo, Button } from '../components'
 import { useAuth } from '../context/AuthContext'
-import { messagingService } from '../services/messagingService'
-import { useNotificationCount } from '../hooks/useNotificationCount'
 import './Dashboard.css'
 
 const Dashboard = () => {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
-  const [messageUnreadCount, setMessageUnreadCount] = useState(0)
-  const { unreadCount: notificationUnreadCount } = useNotificationCount()
-  
-  useEffect(() => {
-    loadUnreadCount()
-  }, [])
-  
-  const loadUnreadCount = async () => {
-    try {
-      const response = await messagingService.getUnreadCount()
-      setMessageUnreadCount(response.unread_count || 0)
-    } catch (err) {
-      console.error('Error loading unread count:', err)
-    }
-  }
-  
-  const handleSignOut = () => {
-    logout()
-    navigate('/')
-  }
+  const { user } = useAuth()
   
   // Get display name from user profile or auth user
   const displayName = user?.profile?.name || user?.name || 'User'
@@ -38,10 +16,9 @@ const Dashboard = () => {
       {/* Top Bar */}
       <div className="dashboard-topbar">
         <button className="icon-button" onClick={() => navigate('/settings')}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
           </svg>
         </button>
         
@@ -55,27 +32,16 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* User Profile Section */}
+      {/* User Profile Name */}
       <div className="dashboard-profile-name">
         <button 
           className="profile-name-button"
           onClick={() => navigate('/profile')}
         >
-          <div className="profile-avatar-wrapper">
-            <div className="profile-avatar">
-              {displayName.charAt(0).toUpperCase()}
-            </div>
-            <div className="profile-avatar-ring"></div>
-          </div>
-          <div className="profile-info">
-            <span className="profile-greeting">Welcome back,</span>
-            <span className="profile-name-text">{displayName}</span>
-          </div>
-          <div className="profile-arrow">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </div>
+          <span className="profile-name-text">{displayName}</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
         </button>
       </div>
 
@@ -94,15 +60,10 @@ const Dashboard = () => {
         {/* Messages Section */}
         <div className="dashboard-section" onClick={() => navigate('/messages')}>
           <div className="section-icon messages-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-              <circle cx="12" cy="12" r="1" fill="currentColor"/>
-              <circle cx="8" cy="12" r="1" fill="currentColor"/>
-              <circle cx="16" cy="12" r="1" fill="currentColor"/>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
             </svg>
-            {messageUnreadCount > 0 && (
-              <span className="notification-badge">{messageUnreadCount > 99 ? '99+' : messageUnreadCount}</span>
-            )}
+            <span className="notification-badge">1</span>
           </div>
           <p className="section-text">Messages</p>
         </div>
@@ -117,17 +78,6 @@ const Dashboard = () => {
             <span>Talk With An Expert</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-            </svg>
-          </Button>
-
-          <Button 
-            variant="secondary"
-            onClick={() => navigate('/chat-ai')}
-            className="action-button"
-          >
-            <span>Chat With AI Assistant</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
             </svg>
           </Button>
 
@@ -165,7 +115,16 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* Floating ChatBot Widget is already available globally */}
+        {/* ChatAI Floating Button */}
+        <button 
+          className="chatai-button"
+          onClick={() => navigate('/chat-ai')}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          </svg>
+          <span>ChatAI</span>
+        </button>
       </div>
 
       {/* Bottom Navigation */}
@@ -177,15 +136,10 @@ const Dashboard = () => {
           <span>Location</span>
         </button>
         
-        <button className="nav-item nav-item-notification" onClick={() => navigate('/notifications')}>
-          <div style={{ position: 'relative' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-            </svg>
-            {notificationUnreadCount > 0 && (
-              <span className="nav-notification-badge">{notificationUnreadCount > 99 ? '99+' : notificationUnreadCount}</span>
-            )}
-          </div>
+        <button className="nav-item" onClick={() => navigate('/notifications')}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+          </svg>
           <span>Notification</span>
         </button>
         
@@ -196,13 +150,11 @@ const Dashboard = () => {
           <span>Orders</span>
         </button>
         
-        <button className="nav-item signout-nav" onClick={handleSignOut}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
+        <button className="nav-item" onClick={() => navigate('/menu')}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
           </svg>
-          <span>Sign Out</span>
+          <span>Menu</span>
         </button>
       </div>
     </div>

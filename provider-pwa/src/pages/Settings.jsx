@@ -5,12 +5,6 @@ import { Logo, Button, Input } from '../components'
 import { providerService } from '../services/providerService'
 import './Settings.css'
 
-const REDEEM_AMOUNTS = [
-  { amount: 50, label: '50 Credits' },
-  { amount: 100, label: '100 Credits' },
-  { amount: 'all', label: 'All Credits' }
-]
-
 const Settings = () => {
   const navigate = useNavigate()
   const { user, updateUser } = useAuth()
@@ -25,8 +19,6 @@ const Settings = () => {
   const [professionForm, setProfessionForm] = useState({ category: '' })
   const [experienceForm, setExperienceForm] = useState({ description: '' })
   const [hourlyRateForm, setHourlyRateForm] = useState({ hourly_rate: '' })
-  const [redeemForm, setRedeemForm] = useState({ amount: '', method: 'bank' })
-  const [selectedRedeemAmount, setSelectedRedeemAmount] = useState(null)
 
   useEffect(() => {
     // Load current user data
@@ -185,60 +177,6 @@ const Settings = () => {
     }
   }
 
-  const handleRedeemCredits = async (e) => {
-    e.preventDefault()
-    
-    if (!selectedRedeemAmount && !redeemForm.amount) {
-      setMessage({ type: 'error', text: 'Please select or enter an amount to redeem' })
-      return
-    }
-
-    if (redeemForm.method !== 'bank') {
-      setMessage({ type: 'error', text: 'Only bank payment method is supported' })
-      return
-    }
-
-    const currentCredits = user?.profile?.credits || 20
-    let redeemAmount = 0
-
-    if (selectedRedeemAmount === 'all') {
-      redeemAmount = currentCredits
-    } else if (selectedRedeemAmount) {
-      redeemAmount = selectedRedeemAmount
-    } else {
-      redeemAmount = parseFloat(redeemForm.amount)
-    }
-
-    if (isNaN(redeemAmount) || redeemAmount <= 0) {
-      setMessage({ type: 'error', text: 'Please enter a valid amount' })
-      return
-    }
-
-    if (redeemAmount > currentCredits) {
-      setMessage({ type: 'error', text: `You only have ${currentCredits} credits available` })
-      return
-    }
-
-    setLoading(true)
-    setMessage({ type: '', text: '' })
-
-    try {
-      await providerService.redeemCredits(redeemAmount, redeemForm.method)
-      setMessage({ type: 'success', text: 'Bank transfer initiated (fake)' })
-      await updateUser()
-      setSelectedRedeemAmount(null)
-      setRedeemForm({ amount: '', method: 'bank' })
-      setTimeout(() => {
-        setActiveSection(null)
-        setMessage({ type: '', text: '' })
-      }, 2000)
-    } catch (error) {
-      setMessage({ type: 'error', text: error.response?.data?.error || 'Failed to redeem credits. Please try again.' })
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const settingsOptions = [
     {
       id: 'name',
@@ -306,26 +244,6 @@ const Settings = () => {
         </svg>
       ),
       currentValue: user?.profile?.hourly_rate ? `$${user.profile.hourly_rate}/hr` : 'Not set'
-    },
-    {
-      id: 'buyCredits',
-      title: 'Buy Credits',
-      icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      ),
-      currentValue: `${user?.profile?.credits !== undefined ? user.profile.credits.toFixed(2) : 20.0} credits available`
-    },
-    {
-      id: 'redeemCredits',
-      title: 'Redeem Credits',
-      icon: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-      ),
-      currentValue: `${user?.profile?.credits !== undefined ? user.profile.credits.toFixed(2) : 20.0} credits available`
     }
   ]
 
@@ -552,116 +470,6 @@ const Settings = () => {
                       </Button>
                       <Button type="submit" disabled={loading}>
                         {loading ? 'Saving...' : 'Save'}
-                      </Button>
-                    </div>
-                  </form>
-                )}
-
-                {option.id === 'buyCredits' && (
-                  <div className="settings-form-section">
-                    <div className="buy-credits-redirect">
-                      <p className="buy-credits-text">Purchase credits to use for accepting jobs</p>
-                      <Button
-                        variant="primary"
-                        onClick={() => navigate('/buy-credits')}
-                        className="buy-credits-button"
-                      >
-                        Go to Buy Credits
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {option.id === 'redeemCredits' && (
-                  <form onSubmit={handleRedeemCredits} className="settings-form">
-                    <div className="redeem-credits-section">
-                      <div className="current-credits-display">
-                        <span className="current-credits-label">Current Credits:</span>
-                        <span className="current-credits-amount">{user?.profile?.credits !== undefined ? user.profile.credits : 20}</span>
-                      </div>
-                      
-                      <div className="redeem-amount-section">
-                        <h3 className="redeem-subtitle">Select Amount</h3>
-                        <div className="redeem-amount-buttons">
-                          {REDEEM_AMOUNTS.map((item) => {
-                            const amount = item.amount === 'all' 
-                              ? (user?.profile?.credits || 20) 
-                              : item.amount
-                            const isDisabled = amount > (user?.profile?.credits || 20)
-                            
-                            return (
-                              <button
-                                key={item.amount}
-                                type="button"
-                                className={`redeem-amount-button ${selectedRedeemAmount === item.amount ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
-                                onClick={() => {
-                                  if (!isDisabled) {
-                                    setSelectedRedeemAmount(item.amount)
-                                    setRedeemForm({ ...redeemForm, amount: '' })
-                                    setMessage({ type: '', text: '' })
-                                  }
-                                }}
-                                disabled={isDisabled}
-                              >
-                                {item.label}
-                              </button>
-                            )
-                          })}
-                        </div>
-                        <div className="redeem-or">OR</div>
-                        <Input
-                          type="number"
-                          placeholder="Enter custom amount"
-                          value={redeemForm.amount}
-                          onChange={(e) => {
-                            setRedeemForm({ ...redeemForm, amount: e.target.value })
-                            setSelectedRedeemAmount(null)
-                            setMessage({ type: '', text: '' })
-                          }}
-                          min="0"
-                          step="0.01"
-                        />
-                      </div>
-
-                      <div className="redeem-method-section">
-                        <h3 className="redeem-subtitle">Payment Method</h3>
-                        <label className={`redeem-method-option ${redeemForm.method === 'bank' ? 'selected' : ''}`}>
-                          <input
-                            type="radio"
-                            name="redeem_method"
-                            value="bank"
-                            checked={redeemForm.method === 'bank'}
-                            onChange={(e) => setRedeemForm({ ...redeemForm, method: e.target.value })}
-                          />
-                          <div className="redeem-method-content">
-                            <div className="redeem-method-icon">
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
-                              </svg>
-                            </div>
-                            <div className="redeem-method-details">
-                              <div className="redeem-method-name">Bank</div>
-                              <div className="redeem-method-desc">Bank transfer (fake)</div>
-                            </div>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                    <div className="settings-form-actions">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => {
-                          setActiveSection(null)
-                          setSelectedRedeemAmount(null)
-                          setRedeemForm({ amount: '', method: 'bank' })
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" disabled={loading || (!selectedRedeemAmount && !redeemForm.amount)}>
-                        {loading ? 'Processing...' : 'Redeem'}
                       </Button>
                     </div>
                   </form>

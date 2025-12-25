@@ -1,6 +1,6 @@
 .providers-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background-color: var(--primary-dark);
   padding-bottom: 80px;
 }
 
@@ -9,30 +9,19 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
+  background-color: var(--accent-light);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .back-button {
-  background: rgba(255, 255, 255, 0.1);
+  background: none;
   border: none;
-  border-radius: 12px;
-  color: var(--white);
+  color: var(--text-dark);
   cursor: pointer;
   padding: var(--spacing-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-weight: 600;
-}
-
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
 }
 
 .providers-search-section {
@@ -70,29 +59,26 @@
 }
 
 .provider-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background-color: var(--white);
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-md);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: default;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .provider-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);
-  border-color: var(--accent-gold);
+  box-shadow: var(--shadow-md);
 }
 
 .provider-avatar {
   width: 60px;
   height: 60px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-secondary) 100%);
+  background-color: var(--primary-light);
   color: var(--white);
   display: flex;
   align-items: center;
@@ -100,7 +86,6 @@
   font-size: 1.5rem;
   font-weight: bold;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
 }
 
 .provider-info {
@@ -110,7 +95,7 @@
 
 .provider-name {
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dark);
   margin: 0 0 var(--spacing-xs) 0;
 }
@@ -132,7 +117,7 @@
 .provider-rate {
   font-size: 0.875rem;
   color: var(--accent-gold);
-  font-weight: 700;
+  font-weight: 600;
   margin: var(--spacing-xs) 0 0 0;
 }
 
@@ -186,7 +171,6 @@
   text-align: center;
   padding: var(--spacing-2xl);
   color: var(--accent-gold);
-  font-weight: 600;
 }
 
 /* Mobile Responsive */

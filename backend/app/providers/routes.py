@@ -9,9 +9,7 @@ from app.models.rating import Rating
 from app.models.job import Job
 from app.models.offer import Offer
 from app.models.credit_transaction import CreditTransaction
-from app.models.provider_credit_transaction import ProviderCreditTransaction
-from app.models.contact_view import ContactView
-from app.utils.decorators import provider_required, customer_required, get_user_id_from_jwt
+from app.utils.decorators import provider_required, customer_required
 import math
 
 
@@ -53,28 +51,10 @@ def calculate_credits_for_call(rating):
         return 5
 
 
-def calculate_provider_credits_for_contact_view(rating):
-    """Calculate provider credits earned when customer views contact based on provider rating"""
-    if rating is None or rating == 0.0:
-        return 12.0  # NA counts as 12.0 credits
-    elif rating >= 4.5:
-        return 12.0
-    elif rating >= 4.0:
-        return 9.0
-    elif rating >= 3.0:
-        return 7.0
-    else:
-        return 5.0
-
-
 @providers_bp.route('/search', methods=['GET'])
 @jwt_required()
 def search_providers():
     """Search providers with filters"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    user_role = current_user.get('role')
-    
     category = request.args.get('category')
     min_rating = request.args.get('min_rating', type=float)
     max_price = request.args.get('max_price', type=float)
@@ -88,14 +68,6 @@ def search_providers():
     
     # Start with all providers (not just verified)
     query = Provider.query
-    
-    # CRITICAL: For customer-facing queries, only show available providers
-    # Providers and admins can see all providers, but customers can only see available ones
-    if user_role == 'customer':
-        query = query.filter_by(is_available=True)
-    elif available_only:
-        # If explicitly requested, filter by availability
-        query = query.filter_by(is_available=True)
     
     # Only filter by verified if explicitly requested
     if verified_only:
@@ -115,6 +87,8 @@ def search_providers():
         query = query.filter(Provider.rating_avg >= min_rating)
     if max_price:
         query = query.filter(Provider.hourly_rate <= max_price)
+    if available_only:
+        query = query.filter_by(is_available=True)
     
     providers = query.all()
     
@@ -143,14 +117,7 @@ def search_providers():
 @jwt_required()
 def get_provider_details(provider_id):
     """Get provider details with reviews"""
-    current_user = get_jwt_identity()
-    user_role = current_user.get('role')
-    
     provider = Provider.query.get_or_404(provider_id)
-    
-    # CRITICAL: Customers cannot view details of unavailable providers
-    if user_role == 'customer' and not provider.is_available:
-        return jsonify({'error': 'Provider is not available'}), 404
     
     # Return public provider profile data
     provider_data = provider.to_dict(include_contact=True)
@@ -216,7 +183,7 @@ def get_nearby_providers():
 def get_my_profile():
     """Get provider's own profile"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.provider:
         return jsonify({'error': 'Provider profile not found'}), 404
@@ -231,7 +198,7 @@ def get_my_profile():
 def update_my_profile():
     """Update provider's own profile"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.provider:
         return jsonify({'error': 'Provider profile not found'}), 404
@@ -261,25 +228,19 @@ def update_my_profile():
         return jsonify({'error': str(e)}), 500
 
 
-@providers_bp.route('/availability', methods=['PUT', 'POST'], endpoint='update_availability')
+@providers_bp.route('/availability', methods=['PUT'], endpoint='update_availability')
 @jwt_required()
 @provider_required
 def update_availability():
     """Update provider availability status"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.provider:
         return jsonify({'error': 'Provider profile not found'}), 404
     
     data = request.get_json()
     is_available = data.get('is_available', True)
-    
-    # Ensure boolean type
-    if isinstance(is_available, str):
-        is_available = is_available.lower() in ('true', '1', 'yes')
-    else:
-        is_available = bool(is_available)
     
     try:
         user.provider.is_available = is_available
@@ -300,7 +261,7 @@ def update_availability():
 def get_stats():
     """Get provider statistics"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.provider:
         return jsonify({'error': 'Provider profile not found'}), 404
@@ -335,7 +296,7 @@ def get_stats():
 def get_requests():
     """Get open service requests for provider's category"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.provider:
         return jsonify({'error': 'Provider profile not found'}), 404
@@ -372,7 +333,7 @@ def get_requests():
 def submit_offer(request_id):
     """Submit an offer on a service request"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.provider:
         return jsonify({'error': 'Provider profile not found'}), 404
@@ -429,16 +390,12 @@ def submit_offer(request_id):
 def reveal_contact(provider_id):
     """Reveal provider contact number after credit deduction"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user.customer:
         return jsonify({'error': 'Customer profile not found'}), 404
     
     provider = Provider.query.get_or_404(provider_id)
-    
-    # CRITICAL: Customers cannot reveal contact of unavailable providers
-    if not provider.is_available:
-        return jsonify({'error': 'Provider is not available'}), 403
     
     # Check if provider has a phone number
     if not provider.phone:
@@ -458,49 +415,22 @@ def reveal_contact(provider_id):
         }), 402  # 402 Payment Required
     
     try:
-        # Deduct customer credits
+        # Deduct credits
         user.customer.credits -= credits_needed
         
         # Ensure credits never go negative (safety check)
         if user.customer.credits < 0:
             user.customer.credits = 0
         
-        # Create customer credit transaction record for auditing
-        customer_transaction = CreditTransaction(
+        # Create credit transaction record for auditing
+        transaction = CreditTransaction(
             customer_id=user.customer.id,
             transaction_type='deduction',
             amount=-credits_needed,  # Negative for deduction
             description=f'Call reveal for provider {provider.name}',
             provider_id=provider_id
         )
-        db.session.add(customer_transaction)
-        
-        # Calculate and award provider credits
-        provider_rating = provider.rating_avg
-        provider_credits_awarded = calculate_provider_credits_for_contact_view(provider_rating)
-        
-        # Award credits to provider
-        provider.credits += provider_credits_awarded
-        
-        # Create provider credit transaction record
-        provider_transaction = ProviderCreditTransaction(
-            provider_id=provider.id,
-            transaction_type='contact_view',
-            amount=provider_credits_awarded,
-            status='completed',
-            method=None,
-            description=f'Credits earned from customer contact view'
-        )
-        db.session.add(provider_transaction)
-        
-        # Create contact view record
-        contact_view = ContactView(
-            provider_id=provider.id,
-            customer_id=user.customer.id,
-            credits_awarded=provider_credits_awarded
-        )
-        db.session.add(contact_view)
-        
+        db.session.add(transaction)
         db.session.commit()
         
         return jsonify({
@@ -513,197 +443,4 @@ def reveal_contact(provider_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
-
-@providers_bp.route('/credits/redeem', methods=['POST'], endpoint='redeem_credits')
-@jwt_required()
-@provider_required
-def redeem_credits():
-    """Redeem provider credits (fake bank transaction)"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    if not user.provider:
-        return jsonify({'error': 'Provider profile not found'}), 404
-    
-    data = request.get_json()
-    
-    # Validate required fields
-    if not data.get('amount'):
-        return jsonify({'error': 'Amount is required'}), 400
-    
-    if not data.get('method'):
-        return jsonify({'error': 'Payment method is required'}), 400
-    
-    amount = float(data['amount'])
-    method = data['method'].lower()
-    
-    # Validate amount
-    if amount <= 0:
-        return jsonify({'error': 'Amount must be greater than 0'}), 400
-    
-    # Validate method
-    if method != 'bank':
-        return jsonify({'error': 'Only bank payment method is supported'}), 400
-    
-    provider = user.provider
-    
-    # Validate provider has enough credits
-    if amount > provider.credits:
-        return jsonify({
-            'error': 'Insufficient credits',
-            'required': amount,
-            'available': provider.credits,
-            'message': f'You need {amount} credits to redeem. You have {provider.credits} credits.'
-        }), 402  # 402 Payment Required
-    
-    try:
-        # Deduct credits atomically
-        provider.credits -= amount
-        
-        # Ensure credits never go negative (safety check)
-        if provider.credits < 0:
-            provider.credits = 0
-        
-        # Create provider credit transaction record
-        transaction = ProviderCreditTransaction(
-            provider_id=provider.id,
-            transaction_type='redeem',
-            amount=amount,
-            status='completed',
-            method='bank',
-            description='Bank transfer redemption (fake)'
-        )
-        db.session.add(transaction)
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Credits redeemed successfully',
-            'amount_redeemed': amount,
-            'credits': provider.credits
-        }), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
-
-@providers_bp.route('/credits/purchase', methods=['POST'], endpoint='purchase_credits')
-@jwt_required()
-@provider_required
-def purchase_credits():
-    """Purchase credits for provider (fake payment)"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    if not user.provider:
-        return jsonify({'error': 'Provider profile not found'}), 404
-    
-    data = request.get_json()
-    
-    # Validate required fields
-    if not data.get('amount'):
-        return jsonify({'error': 'Credit amount is required'}), 400
-    
-    if not data.get('payment_method'):
-        return jsonify({'error': 'Payment method is required'}), 400
-    
-    amount = float(data['amount'])
-    payment_method = data['payment_method'].lower()
-    
-    # Validate amount (must be one of the predefined packages)
-    valid_packages = [100, 300, 500]
-    if amount not in valid_packages:
-        return jsonify({'error': f'Invalid credit amount. Must be one of: {valid_packages}'}), 400
-    
-    # Validate payment method
-    if payment_method != 'bank':
-        return jsonify({'error': 'Only Bank payment method is supported'}), 400
-    
-    try:
-        provider = user.provider
-        provider.credits += amount
-        
-        # Create provider credit transaction record
-        from app.models.provider_credit_transaction import ProviderCreditTransaction
-        transaction = ProviderCreditTransaction(
-            provider_id=provider.id,
-            transaction_type='credit_purchase',
-            amount=amount,
-            status='completed',
-            method='bank',
-            description=f'Credit purchase ({amount} credits)'
-        )
-        db.session.add(transaction)
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Credits purchased successfully',
-            'credits': provider.credits,
-            'amount_added': amount
-        }), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
-
-@providers_bp.route('/upcoming-calls', methods=['GET'], endpoint='get_upcoming_calls')
-@jwt_required()
-@provider_required
-def get_upcoming_calls():
-    """Get list of customers who viewed provider's contact number"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    if not user.provider:
-        return jsonify({'error': 'Provider profile not found'}), 404
-    
-    provider = user.provider
-    
-    # Get all contact views for this provider, ordered by most recent first
-    contact_views = ContactView.query.filter_by(
-        provider_id=provider.id
-    ).order_by(ContactView.created_at.desc()).all()
-    
-    # Format response with customer information
-    upcoming_calls = []
-    for view in contact_views:
-        view_data = view.to_dict(include_customer=True)
-        upcoming_calls.append(view_data)
-    
-    return jsonify({
-        'upcoming_calls': upcoming_calls,
-        'count': len(upcoming_calls)
-    }), 200
-
-
-@providers_bp.route('/customers/<int:customer_id>/profile', methods=['GET'], endpoint='get_customer_profile')
-@jwt_required()
-@provider_required
-def get_customer_profile(customer_id):
-    """Get customer profile (read-only) for provider"""
-    current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
-    
-    if not user.provider:
-        return jsonify({'error': 'Provider profile not found'}), 404
-    
-    # Verify that this customer has viewed provider's contact
-    contact_view = ContactView.query.filter_by(
-        provider_id=user.provider.id,
-        customer_id=customer_id
-    ).first()
-    
-    if not contact_view:
-        return jsonify({'error': 'Customer profile not accessible'}), 403
-    
-    # Get customer information
-    customer = Customer.query.get(customer_id)
-    if not customer:
-        return jsonify({'error': 'Customer not found'}), 404
-    
-    return jsonify({
-        'customer': customer.to_dict()
-    }), 200
 

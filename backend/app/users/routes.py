@@ -15,8 +15,7 @@ from app.models.rating import Rating
 def get_profile():
     """Get current user's profile"""
     current_user = get_jwt_identity()
-    user_id = current_user['id'] if isinstance(current_user, dict) else current_user
-    user = User.query.get(user_id)
+    user = User.query.get(current_user['id'])
     
     if not user:
         return jsonify({'error': 'User not found'}), 404
@@ -37,8 +36,7 @@ def get_profile():
 def update_profile():
     """Update current user's profile"""
     current_user = get_jwt_identity()
-    user_id = current_user['id'] if isinstance(current_user, dict) else current_user
-    user = User.query.get(user_id)
+    user = User.query.get(current_user['id'])
     
     if not user:
         return jsonify({'error': 'User not found'}), 404
@@ -86,8 +84,7 @@ def update_profile():
 def get_job_history():
     """Get customer's job history"""
     current_user = get_jwt_identity()
-    user_id = current_user['id'] if isinstance(current_user, dict) else current_user
-    user = User.query.get(user_id)
+    user = User.query.get(current_user['id'])
     
     if not user or user.role != 'customer':
         return jsonify({'error': 'Customer access required'}), 403
@@ -107,8 +104,7 @@ def get_job_history():
 def get_ratings():
     """Get user's ratings (given or received)"""
     current_user = get_jwt_identity()
-    user_id = current_user['id'] if isinstance(current_user, dict) else current_user
-    user = User.query.get(user_id)
+    user = User.query.get(current_user['id'])
     
     if not user:
         return jsonify({'error': 'User not found'}), 404

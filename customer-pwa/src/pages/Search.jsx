@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { Logo } from '../components'
 import { Input, Button } from '../components'
 import { providerService } from '../services/providerService'
-import { useNotificationCount } from '../hooks/useNotificationCount'
 import './Search.css'
 
 const Search = () => {
   const navigate = useNavigate()
-  const { unreadCount: notificationUnreadCount } = useNotificationCount()
   const [providers, setProviders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -448,15 +446,10 @@ const Search = () => {
           <span>Location</span>
         </button>
         
-        <button className="nav-item nav-item-notification" onClick={() => navigate('/notifications')}>
-          <div style={{ position: 'relative' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-            </svg>
-            {notificationUnreadCount > 0 && (
-              <span className="nav-notification-badge">{notificationUnreadCount > 99 ? '99+' : notificationUnreadCount}</span>
-            )}
-          </div>
+        <button className="nav-item" onClick={() => navigate('/notifications')}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+          </svg>
           <span>Notification</span>
         </button>
         

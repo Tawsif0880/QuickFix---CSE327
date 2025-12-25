@@ -40,7 +40,7 @@ const SignIn = () => {
   return (
     <div className="signin-container">
       <div className="signin-content">
-        <Logo showEst={true} size="extra-large" />
+        <Logo showEst={true} size="medium" />
         
         <form onSubmit={handleSubmit} className="signin-form">
           <Input

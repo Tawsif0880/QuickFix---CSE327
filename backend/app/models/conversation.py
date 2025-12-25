@@ -10,7 +10,6 @@ class Conversation(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False, index=True)
     provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), nullable=False, index=True)
     last_message_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
-    customer_message_count = db.Column(db.Integer, default=0, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
     # Relationships

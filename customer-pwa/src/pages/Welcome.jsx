@@ -9,7 +9,7 @@ const Welcome = () => {
   return (
     <div className="welcome-container">
       <div className="welcome-content">
-        <Logo showEst={true} size="extra-large" />
+        <Logo showEst={true} size="large" />
         
         <div className="welcome-buttons">
           <Button 

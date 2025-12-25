@@ -2,7 +2,6 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components'
-import InstallPrompt from './components/InstallPrompt'
 
 // Pages
 import Welcome from './pages/Welcome'
@@ -16,19 +15,11 @@ import Chat from './pages/Chat'
 import JobBoard from './pages/JobBoard'
 import SavedJobs from './pages/SavedJobs'
 import AcceptedJobs from './pages/AcceptedJobs'
-import RequestedJobs from './pages/RequestedJobs'
-import UpcomingCalls from './pages/UpcomingCalls'
-import CustomerProfile from './pages/CustomerProfile'
-import EmergencyRequests from './pages/EmergencyRequests'
-import EmergencyJobs from './pages/EmergencyJobs'
-import BuyCredits from './pages/BuyCredits'
-import JobHistory from './pages/JobHistory'
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <InstallPrompt />
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/signin" element={<SignIn />} />
@@ -96,14 +87,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/requested-jobs"
-            element={
-              <ProtectedRoute>
-                <RequestedJobs />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/appointed-jobs" element={<ProtectedRoute><div>Appointed Jobs Page</div></ProtectedRoute>} />
           <Route
             path="/accepted-jobs"
             element={
@@ -112,54 +96,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/upcoming-calls"
-            element={
-              <ProtectedRoute>
-                <UpcomingCalls />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/customer-profile/:customerId"
-            element={
-              <ProtectedRoute>
-                <CustomerProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/emergency-requests"
-            element={
-              <ProtectedRoute>
-                <EmergencyRequests />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/emergency-jobs"
-            element={
-              <ProtectedRoute>
-                <EmergencyJobs />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/buy-credits"
-            element={
-              <ProtectedRoute>
-                <BuyCredits />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/job-history"
-            element={
-              <ProtectedRoute>
-                <JobHistory />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/payment" element={<ProtectedRoute><div>Payment Page</div></ProtectedRoute>} />
+          <Route path="/call-customer" element={<ProtectedRoute><div>Call Customer Page</div></ProtectedRoute>} />
           <Route path="/updates" element={<ProtectedRoute><div>Updates Page</div></ProtectedRoute>} />
           <Route path="/forgot-password" element={<div>Forgot Password Page</div>} />
           

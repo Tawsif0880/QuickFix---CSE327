@@ -18,15 +18,13 @@ class Config:
     SQLALCHEMY_ECHO = False
     
     # CORS
-    cors_origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:3001,http://localhost:3002')
-    CORS_ORIGINS = '*' if cors_origins == '*' else cors_origins.split(',')
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:3001,http://localhost:3002').split(',')
     
     # Rate Limiting
     RATELIMIT_ENABLED = os.getenv('RATELIMIT_ENABLED', 'true').lower() == 'true'
     RATELIMIT_STORAGE_URL = os.getenv('RATELIMIT_STORAGE_URL', 'memory://')
     
-    # AI Services
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+    # OpenAI (Optional)
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 
 

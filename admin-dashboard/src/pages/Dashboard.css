@@ -1,6 +1,6 @@
 .dashboard-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #F0F8FF 0%, #E6F2FF 50%, #F0F8FF 100%);
+  background-color: var(--primary-dark);
   padding-bottom: var(--spacing-xl);
 }
 
@@ -9,8 +9,8 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg);
-  background-color: var(--primary-light);
-  border-bottom: 1px solid rgba(65, 105, 225, 0.2);
+  background-color: var(--primary-medium);
+  border-bottom: 1px solid rgba(212, 192, 142, 0.2);
 }
 
 .header-actions {
@@ -28,8 +28,8 @@
   display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--primary-light);
-  border-bottom: 1px solid rgba(65, 105, 225, 0.2);
+  background-color: var(--primary-medium);
+  border-bottom: 1px solid rgba(212, 192, 142, 0.2);
   overflow-x: auto;
 }
 
@@ -37,7 +37,7 @@
   padding: var(--spacing-sm) var(--spacing-lg);
   background: none;
   border: none;
-  color: var(--text-dark);
+  color: var(--text-light);
   cursor: pointer;
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
@@ -46,13 +46,13 @@
 }
 
 .nav-btn:hover {
-  background-color: rgba(65, 105, 225, 0.1);
+  background-color: rgba(212, 192, 142, 0.1);
   color: var(--accent-gold);
 }
 
 .nav-btn.active {
   background-color: var(--accent-gold);
-  color: var(--white);
+  color: var(--primary-dark);
   font-weight: 600;
 }
 
@@ -75,15 +75,14 @@
 }
 
 .stat-card {
-  background-color: var(--white);
+  background-color: var(--primary-medium);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-md);
-  border: 1px solid rgba(65, 105, 225, 0.2);
+  border: 1px solid rgba(212, 192, 142, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: var(--shadow-sm);
 }
 
 .stat-card:hover {
@@ -108,7 +107,7 @@
 }
 
 .providers-icon {
-  background-color: rgba(65, 105, 225, 0.2);
+  background-color: rgba(212, 192, 142, 0.2);
   color: var(--accent-gold);
 }
 
@@ -136,14 +135,14 @@
 }
 
 .stat-value {
-  color: var(--text-dark);
+  color: var(--white);
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 var(--spacing-xs) 0;
 }
 
 .stat-subtext {
-  color: var(--text-muted);
+  color: var(--text-light);
   font-size: 0.75rem;
   margin: 0;
   opacity: 0.8;
@@ -157,7 +156,7 @@
 }
 
 .stat-details span {
-  color: var(--text-muted);
+  color: var(--text-light);
   font-size: 0.75rem;
   opacity: 0.8;
 }

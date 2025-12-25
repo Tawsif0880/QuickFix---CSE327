@@ -1,6 +1,6 @@
 .providers-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #F0F8FF 0%, #E6F2FF 50%, #F0F8FF 100%);
+  background-color: var(--primary-dark);
   padding-bottom: var(--spacing-xl);
 }
 
@@ -9,16 +9,16 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg);
-  background-color: var(--primary-light);
-  border-bottom: 1px solid rgba(65, 105, 225, 0.2);
+  background-color: var(--primary-medium);
+  border-bottom: 1px solid rgba(212, 192, 142, 0.2);
 }
 
 .dashboard-nav {
   display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--primary-light);
-  border-bottom: 1px solid rgba(65, 105, 225, 0.2);
+  background-color: var(--primary-medium);
+  border-bottom: 1px solid rgba(212, 192, 142, 0.2);
   overflow-x: auto;
 }
 
@@ -26,7 +26,7 @@
   padding: var(--spacing-sm) var(--spacing-lg);
   background: none;
   border: none;
-  color: var(--text-dark);
+  color: var(--text-light);
   cursor: pointer;
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
@@ -35,13 +35,13 @@
 }
 
 .nav-btn:hover {
-  background-color: rgba(65, 105, 225, 0.1);
+  background-color: rgba(212, 192, 142, 0.1);
   color: var(--accent-gold);
 }
 
 .nav-btn.active {
   background-color: var(--accent-gold);
-  color: var(--white);
+  color: var(--primary-dark);
   font-weight: 600;
 }
 
@@ -59,10 +59,9 @@
 
 .table-container {
   overflow-x: auto;
-  background-color: var(--white);
+  background-color: var(--primary-medium);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(65, 105, 225, 0.2);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(212, 192, 142, 0.2);
 }
 
 .providers-table {
@@ -71,7 +70,7 @@
 }
 
 .providers-table thead {
-  background-color: var(--primary-medium);
+  background-color: var(--primary-light);
 }
 
 .providers-table th {
@@ -82,17 +81,17 @@
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid rgba(65, 105, 225, 0.2);
+  border-bottom: 2px solid rgba(212, 192, 142, 0.2);
 }
 
 .providers-table td {
   padding: var(--spacing-md);
-  color: var(--text-dark);
-  border-bottom: 1px solid rgba(65, 105, 225, 0.1);
+  color: var(--text-light);
+  border-bottom: 1px solid rgba(212, 192, 142, 0.1);
 }
 
 .providers-table tbody tr:hover {
-  background-color: rgba(65, 105, 225, 0.05);
+  background-color: rgba(212, 192, 142, 0.05);
 }
 
 .rating {
@@ -121,7 +120,7 @@
 .empty-state {
   text-align: center;
   padding: var(--spacing-xl);
-  color: var(--text-muted);
+  color: var(--text-light);
   opacity: 0.7;
 }
 

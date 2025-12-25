@@ -329,53 +329,29 @@ const CallExpert = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1000
         }}>
           <div style={{
-            backgroundColor: '#1e293b',
+            backgroundColor: 'white',
             padding: '24px',
-            borderRadius: '12px',
+            borderRadius: '8px',
             maxWidth: '400px',
             width: '90%',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-            border: '2px solid rgba(6, 182, 212, 0.3)'
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
           }}>
-            <h3 style={{ 
-              marginTop: 0, 
-              marginBottom: '16px',
-              color: '#ffffff',
-              fontSize: '1.25rem',
-              fontWeight: 700
-            }}>
-              Confirm Contact Reveal
-            </h3>
-            <p style={{ 
-              marginBottom: '8px',
-              color: '#f8fafc',
-              fontSize: '1rem',
-              fontWeight: 600
-            }}>
-              <strong style={{ color: '#06b6d4' }}>{selectedProvider.name}</strong>
+            <h3 style={{ marginTop: 0, marginBottom: '16px' }}>Confirm Contact Reveal</h3>
+            <p style={{ marginBottom: '8px' }}>
+              <strong>{selectedProvider.name}</strong>
             </p>
-            <p style={{ 
-              marginBottom: '16px',
-              color: '#f8fafc',
-              fontSize: '0.95rem',
-              lineHeight: '1.5'
-            }}>
-              This will deduct <strong style={{ color: '#a855f7' }}>{calculateCreditsForCall(selectedProvider.rating_avg)} credits</strong> from your account.
+            <p style={{ marginBottom: '16px' }}>
+              This will deduct <strong>{calculateCreditsForCall(selectedProvider.rating_avg)} credits</strong> from your account.
             </p>
-            <p style={{ 
-              marginBottom: '24px', 
-              fontSize: '14px', 
-              color: '#cbd5e1',
-              lineHeight: '1.5'
-            }}>
-              Your remaining credits: <strong style={{ color: '#06b6d4', fontSize: '16px' }}>{credits}</strong>
+            <p style={{ marginBottom: '24px', fontSize: '14px', color: '#666' }}>
+              Your remaining credits: <strong>{credits}</strong>
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <Button

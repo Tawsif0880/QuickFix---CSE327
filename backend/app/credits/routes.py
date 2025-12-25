@@ -1,6 +1,5 @@
 from flask import request, jsonify
 from app.credits import credits_bp
-from app.utils.decorators import get_user_id_from_jwt
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
 from app.models.user import User
@@ -12,7 +11,7 @@ from app.models.customer import Customer
 def get_balance():
     """Get current customer credit balance"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user:
         return jsonify({'error': 'User not found'}), 404
@@ -33,7 +32,7 @@ def get_balance():
 def purchase_credits():
     """Purchase credits using bank transfer (simulated)"""
     current_user = get_jwt_identity()
-    user = User.query.get(get_user_id_from_jwt(current_user))
+    user = User.query.get(current_user['id'])
     
     if not user:
         return jsonify({'error': 'User not found'}), 404

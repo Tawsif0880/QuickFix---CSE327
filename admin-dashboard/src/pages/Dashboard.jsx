@@ -61,9 +61,6 @@ const Dashboard = () => {
         <button className="nav-btn" onClick={() => navigate('/chats')}>
           Chat Logs
         </button>
-        <button className="nav-btn" onClick={() => navigate('/statistics')}>
-          Statistics
-        </button>
       </nav>
 
       {/* Stats Cards */}

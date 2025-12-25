@@ -197,19 +197,6 @@ const Profile = () => {
           <div className="info-item">
             <div className="info-label">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-              <span>Credits</span>
-            </div>
-            <div className="info-value credits-display">
-              <span className="credits-amount">{profile.credits !== undefined ? profile.credits : 20}</span>
-              <span className="credits-label">credits</span>
-            </div>
-          </div>
-          
-          <div className="info-item">
-            <div className="info-label">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="8.5" cy="7" r="4"/>
                 <path d="M20 8v6M23 11h-6"/>

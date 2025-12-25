@@ -116,7 +116,7 @@ const SignUp = () => {
   return (
     <div className="signup-container">
       <div className="signup-content">
-        <Logo showEst={true} size="extra-large" />
+        <Logo showEst={true} size="medium" />
         
         <form onSubmit={handleSubmit} className="signup-form">
           <Input

@@ -5,22 +5,19 @@
 }
 
 :root {
-  /* Alice Blue Theme */
-  --primary-dark: #F0F8FF; /* Alice Blue - main background */
-  --primary-medium: #E6F2FF; /* Slightly darker for cards */
-  --primary-light: #D6E9FF; /* Darker for headers/subtle elements */
-  --accent-gold: #4169E1; /* Royal Blue - primary accent */
-  --accent-light: #E8F4FF; /* Light blue for backgrounds */
-  --accent-silver: #87CEEB; /* Sky Blue - secondary accent */
-  --input-bg: #FFFFFF;
+  /* Color Palette */
+  --primary-dark: #23103c;
+  --primary-medium: #2F1A4B;
+  --primary-light: #4B2F6B;
+  --accent-gold: #D4C08E;
+  --accent-light: #F5E6D3;
+  --input-bg: #E8D5B7;
   --white: #FFFFFF;
-  --text-dark: #1E3A5F; /* Dark blue-gray for text on light backgrounds */
-  --text-light: #2C3E50; /* Darker text for readability */
-  --text-muted: #5A7BA7; /* Muted blue for secondary text */
-  --error: #ef4444;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --info: #3b82f6;
+  --text-dark: #333333;
+  --text-light: #D4C08E;
+  --error: #FF6B6B;
+  --success: #51CF66;
+  --warning: #FFA726;
 
   /* Typography */
   --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -49,8 +46,8 @@
 
 body {
   font-family: var(--font-primary);
-  background: linear-gradient(135deg, #F0F8FF 0%, #E6F2FF 50%, #F0F8FF 100%);
-  color: var(--text-dark);
+  background-color: var(--primary-dark);
+  color: var(--text-light);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -69,11 +66,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-silver);
+  background: var(--accent-gold);
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-gold);
+  background: #C4B07E;
 }
 

@@ -1,11 +1,6 @@
 import api from './api'
 
 export const messagingService = {
-  async getUnreadCount() {
-    const response = await api.get('/customer/conversations/unread-count')
-    return response.data
-  },
-
   async getConversations() {
     const response = await api.get('/customer/conversations')
     return response.data

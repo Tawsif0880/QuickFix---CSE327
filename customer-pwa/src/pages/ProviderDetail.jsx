@@ -4,7 +4,6 @@ import { Logo } from '../components'
 import { Button } from '../components'
 import { providerService } from '../services/providerService'
 import { userService } from '../services/userService'
-import { jobService } from '../services/jobService'
 import { useAuth } from '../context/AuthContext'
 import './ProviderDetail.css'
 
@@ -20,28 +19,11 @@ const ProviderDetail = () => {
   const [revealedPhone, setRevealedPhone] = useState(null)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [revealing, setRevealing] = useState(false)
-  const [showRequestForm, setShowRequestForm] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    description: '',
-    offered_price: '',
-    location_address: '',
-    preferred_date: ''
-  })
 
   useEffect(() => {
     loadProviderDetails()
     loadCreditBalance()
   }, [id])
-
-  useEffect(() => {
-    // Pre-fill category from provider when provider loads
-    if (provider && !formData.category) {
-      setFormData(prev => ({ ...prev, category: provider.category || '' }))
-    }
-  }, [provider])
 
   useEffect(() => {
     // Calculate credits needed based on provider rating
@@ -135,73 +117,7 @@ const ProviderDetail = () => {
   }
 
   const handleRequestService = () => {
-    setShowRequestForm(true)
-  }
-
-  const handleCloseRequestForm = () => {
-    setShowRequestForm(false)
-    setFormData({
-      title: '',
-      category: provider?.category || '',
-      description: '',
-      offered_price: '',
-      location_address: '',
-      preferred_date: ''
-    })
-  }
-
-  const handleFormChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmitRequest = async (e) => {
-    e.preventDefault()
-    
-    // Validate required fields
-    if (!formData.title.trim()) {
-      alert('Job title is required')
-      return
-    }
-    if (!formData.description.trim()) {
-      alert('Job description is required')
-      return
-    }
-    if (!formData.offered_price || parseFloat(formData.offered_price) <= 0) {
-      alert('Offered price is required and must be greater than 0')
-      return
-    }
-    if (!formData.location_address.trim()) {
-      alert('Location is required')
-      return
-    }
-
-    setSubmitting(true)
-    try {
-      const requestData = {
-        provider_id: parseInt(id),
-        title: formData.title.trim(),
-        category: formData.category || provider?.category || '',
-        description: formData.description,
-        offered_price: parseFloat(formData.offered_price),
-        location_address: formData.location_address,
-        preferred_date: formData.preferred_date || null
-      }
-
-      const response = await jobService.createProviderRequest(requestData)
-      
-      if (response.message) {
-        alert('Service request submitted successfully!')
-        handleCloseRequestForm()
-        // Optionally navigate to orders page
-        // navigate('/orders')
-      }
-    } catch (err) {
-      console.error('Error submitting request:', err)
-      alert(err.response?.data?.error || 'Failed to submit service request')
-    } finally {
-      setSubmitting(false)
-    }
+    navigate(`/service-request?providerId=${id}`)
   }
 
   const renderRating = (rating) => {
@@ -405,190 +321,6 @@ const ProviderDetail = () => {
           Request Service
         </Button>
       </div>
-
-      {/* Request Service Form Dialog */}
-      {showRequestForm && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '24px',
-            borderRadius: '8px',
-            maxWidth: '500px',
-            width: '100%',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: '20px' }}>Request Service</h3>
-            <form onSubmit={handleSubmitRequest}>
-              {/* Job Title */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Job Title <span style={{ color: 'red' }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleFormChange}
-                  required
-                  placeholder="Enter a title for this service request"
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
-
-              {/* Job Category */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Job Category (Optional)
-                </label>
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleFormChange}
-                  placeholder={provider?.category || 'Category'}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
-
-              {/* Job Description */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Job Description <span style={{ color: 'red' }}>*</span>
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  required
-                  rows="4"
-                  placeholder="Describe the service you need..."
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    fontFamily: 'inherit',
-                    resize: 'vertical'
-                  }}
-                />
-              </div>
-
-              {/* Offered Price */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Offered Price <span style={{ color: 'red' }}>*</span>
-                </label>
-                <input
-                  type="number"
-                  name="offered_price"
-                  value={formData.offered_price}
-                  onChange={handleFormChange}
-                  required
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
-
-              {/* Location */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Location <span style={{ color: 'red' }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="location_address"
-                  value={formData.location_address}
-                  onChange={handleFormChange}
-                  required
-                  placeholder="Enter service location address"
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
-
-              {/* Preferred Date */}
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Preferred Date (Optional)
-                </label>
-                <input
-                  type="datetime-local"
-                  name="preferred_date"
-                  value={formData.preferred_date}
-                  onChange={handleFormChange}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <Button
-                  type="button"
-                  onClick={handleCloseRequestForm}
-                  variant="secondary"
-                  style={{ minWidth: '100px' }}
-                  disabled={submitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  style={{ minWidth: '100px' }}
-                  disabled={submitting}
-                >
-                  {submitting ? 'Submitting...' : 'Submit Request'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Confirmation Dialog */}
       {showConfirmDialog && (

@@ -5,30 +5,19 @@
 }
 
 :root {
-  /* Cappuccino Theme - Matching Job History UI */
-  /* Dark Blue Background */
-  --primary-dark: #1a1a2e;
-  --primary-medium: #16213e;
-  --primary-light: #0f3460;
-  
-  /* Accent Colors */
-  --accent-gold: #D4C08E; /* Gold accent for dividers, highlights */
-  --accent-light: rgba(255, 255, 255, 0.08); /* Card backgrounds */
-  --input-bg: rgba(255, 255, 255, 0.08);
-  
-  /* Text Colors */
+  /* Color Palette - Provider Theme */
+  --primary-dark: #31111D;
+  --primary-medium: #4A1F1F;
+  --primary-light: #6B3F3F;
+  --accent-gold: #D4C08E;
+  --accent-light: #F5E6D3;
+  --input-bg: #E8D5B7;
   --white: #FFFFFF;
-  --text-dark: #FFFFFF; /* White text on dark background */
-  --text-light: rgba(255, 255, 255, 0.7); /* Muted white text */
-  
-  /* Status Colors */
+  --text-dark: #333333;
+  --text-light: #D4C08E;
   --error: #FF6B6B;
-  --success: #10b981; /* Green for completed */
-  --emergency-red: #8B0000; /* Dark red for emergency */
-  
-  /* Purple for active states */
-  --purple-active: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --purple-border: #667eea;
+  --success: #51CF66;
+  --purple-border: #8B5F3F;
 
   /* Typography */
   --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -57,8 +46,8 @@
 
 body {
   font-family: var(--font-primary);
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  color: var(--white);
+  background-color: var(--primary-dark);
+  color: var(--text-light);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -74,7 +63,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--primary-medium);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -83,62 +72,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C4B07E;
-}
-
-/* Vibrant Icon Styling - Provider PWA */
-.icon-button {
-  background: linear-gradient(135deg, rgba(212, 192, 142, 0.2) 0%, rgba(102, 126, 234, 0.2) 100%);
-  border: 1px solid rgba(212, 192, 142, 0.3);
-}
-
-.icon-button:hover {
-  background: linear-gradient(135deg, rgba(212, 192, 142, 0.4) 0%, rgba(102, 126, 234, 0.4) 100%);
-  border-color: var(--accent-gold);
-  box-shadow: 0 4px 12px rgba(212, 192, 142, 0.4);
-}
-
-.icon-button svg {
-  color: var(--accent-gold);
-  transition: all 0.3s ease;
-}
-
-.icon-button:hover svg {
-  color: var(--white);
-  transform: scale(1.15);
-  filter: drop-shadow(0 2px 8px rgba(212, 192, 142, 0.8));
-}
-
-.back-button svg {
-  color: var(--accent-gold);
-  transition: all 0.3s ease;
-}
-
-.back-button:hover svg {
-  color: #667eea;
-  transform: translateX(-3px) scale(1.1);
-  filter: drop-shadow(0 2px 6px rgba(102, 126, 234, 0.6));
-}
-
-.nav-item svg {
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
-}
-
-.nav-item:hover svg {
-  color: var(--accent-gold);
-  transform: scale(1.2) translateY(-3px);
-  filter: drop-shadow(0 4px 12px rgba(212, 192, 142, 0.6));
-}
-
-.messages-button svg {
-  color: var(--white);
-  transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.messages-button:hover svg {
-  transform: scale(1.15) rotate(5deg);
-  filter: drop-shadow(0 4px 8px rgba(212, 192, 142, 0.5));
+  background: #B89D6E;
 }
 

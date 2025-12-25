@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background-color: var(--primary-dark);
 }
 
 .chat-topbar {
@@ -10,10 +10,8 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  background-color: var(--accent-light);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .back-button {
@@ -42,8 +40,8 @@
 
 .chat-provider-name {
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--white);
+  font-weight: 600;
+  color: var(--text-dark);
 }
 
 .chat-provider-category {
@@ -58,10 +56,8 @@
   align-items: center;
   gap: var(--spacing-xs);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: rgba(6, 182, 212, 0.2);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background-color: var(--primary-medium);
   border-radius: var(--radius-md);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .credits-label {
@@ -171,21 +167,15 @@
 }
 
 .message-sent .message-content {
-  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-secondary) 100%);
-  color: var(--white);
+  background-color: var(--accent-gold);
+  color: var(--primary-dark);
   border-bottom-right-radius: var(--radius-sm);
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
 }
 
 .message-received .message-content {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  background-color: var(--primary-medium);
   color: var(--white);
   border-bottom-left-radius: var(--radius-sm);
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .message-time {
@@ -201,10 +191,8 @@
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(6, 182, 212, 0.2);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  background-color: var(--accent-light);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .chat-input {
@@ -234,20 +222,13 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-secondary) 100%);
+  background-color: var(--accent-gold);
   border: none;
   border-radius: var(--radius-full);
-  color: var(--white);
+  color: var(--primary-dark);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
-  font-weight: 700;
-}
-
-.chat-send-button:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
 }
 
 .chat-send-button:hover:not(:disabled) {
@@ -290,76 +271,5 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.message-count-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--primary-medium);
-  color: var(--white);
-  font-size: 0.75rem;
-  opacity: 0.8;
-  text-align: center;
-}
-
-.confirm-dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: var(--spacing-md);
-}
-
-.confirm-dialog {
-  background: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-.confirm-dialog h3 {
-  color: var(--white);
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0 0 var(--spacing-md) 0;
-}
-
-.confirm-dialog p {
-  color: var(--white);
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  margin: 0 0 var(--spacing-sm) 0;
-  opacity: 0.9;
-}
-
-.confirm-dialog p:last-of-type {
-  margin-bottom: var(--spacing-lg);
-}
-
-.confirm-dialog strong {
-  color: var(--accent-gold);
-  font-weight: 700;
-}
-
-.confirm-dialog-actions {
-  display: flex;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-lg);
-}
-
-.confirm-dialog-actions button {
-  flex: 1;
 }
 

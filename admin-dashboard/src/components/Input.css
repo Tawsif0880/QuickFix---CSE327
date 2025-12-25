@@ -20,8 +20,8 @@
 .input-field {
   width: 100%;
   padding: var(--spacing-md);
-  background-color: var(--white);
-  border: 2px solid rgba(65, 105, 225, 0.2);
+  background-color: var(--input-bg);
+  border: 2px solid transparent;
   border-radius: var(--radius-md);
   font-size: 1rem;
   color: var(--text-dark);
@@ -33,7 +33,6 @@
   outline: none;
   border-color: var(--accent-gold);
   background-color: var(--white);
-  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
 }
 
 .input-field::placeholder {

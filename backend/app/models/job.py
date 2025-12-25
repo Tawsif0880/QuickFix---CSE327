@@ -12,8 +12,7 @@ class Job(db.Model):
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False, index=True)
-    status = db.Column(db.String(20), default='OPEN', nullable=False, index=True)  # OPEN, ACCEPTED, COMPLETED, REPORTED, CLOSED, in_progress, cancelled
-    is_emergency = db.Column(db.Boolean, default=False, nullable=False, index=True)
+    status = db.Column(db.String(20), default='OPEN', nullable=False, index=True)  # OPEN, ACCEPTED, CLOSED, in_progress, completed, cancelled
     offered_price = db.Column(db.Float, nullable=True)  # Price offered by customer
     price = db.Column(db.Float, nullable=True)  # Agreed price (after acceptance)
     location_address = db.Column(db.String(200), nullable=True)
@@ -23,7 +22,6 @@ class Job(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     completed_at = db.Column(db.DateTime, nullable=True)
-    report_reason = db.Column(db.Text, nullable=True)  # Reason when provider reports customer
     
     # Relationships
     bookings = db.relationship('Booking', backref='job', lazy='dynamic', cascade='all, delete-orphan')
@@ -42,7 +40,6 @@ class Job(db.Model):
             'description': self.description,
             'category': self.category,
             'status': self.status,
-            'is_emergency': self.is_emergency,
             'offered_price': self.offered_price,
             'price': self.price,
             'location_address': self.location_address,
@@ -50,8 +47,7 @@ class Job(db.Model):
             'longitude': self.longitude,
             'preferred_date': self.preferred_date.isoformat() if self.preferred_date else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
-            'completed_at': self.completed_at.isoformat() if self.completed_at else None,
-            'report_reason': self.report_reason
+            'completed_at': self.completed_at.isoformat() if self.completed_at else None
         }
         if include_customer and self.customer:
             data['customer'] = self.customer.to_dict()
